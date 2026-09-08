@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CultureWave | Booking Confirmed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- QR code library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <!-- html2canvas for download -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { background: #f4f8ff; }
+
+    /* ── PAGE SHELL ── */
+    .sc-page {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 3rem 1.4rem 5rem;
+    }
+
+    /* ── STATUS BANNER ── */
+    .sc-status-banner {
+      width: 100%;
+      max-width: 680px;
+      border-radius: 28px;
+      padding: 2.4rem 2rem;
+      text-align: center;
+      margin-bottom: 1.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .sc-status-banner.success {
+      background: linear-gradient(145deg, #0a0f1e 0%, #1242c5 55%, #2f6bff 100%);
+      box-shadow: 0 20px 60px rgba(18,66,197,.3);
+    }
+    .sc-status-banner.failed {
+      background: linear-gradient(145deg, #1a0a0a 0%, #3b0f0f 100%);
+    }
+    .sc-status-banner::before {
+      content: "";
+      position: absolute; top: -80px; right: -80px;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(126,179,255,.25) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .sc-status-banner.failed::before {
+      background: radial-gradient(circle, rgba(239,68,68,.22) 0%, transparent 68%);
+    }
+    .sc-icon-ring {
+      width: 5rem; height: 5rem; border-radius: 50%;
+      display: grid; place-items: center;
+      margin: 0 auto 1.2rem;
+      font-size: 2.2rem;
+      position: relative; z-index: 1;
+    }
+    .sc-status-banner.success .sc-icon-ring {
+      background: rgba(34,197,94,.15);
+      border: 2px solid rgba(34,197,94,.35);
+      box-shadow: 0 0 0 8px rgba(34,197,94,.08);
+    }
+    .sc-status-banner.failed .sc-icon-ring {
+      background: rgba(239,68,68,.15);
+      border: 2px solid rgba(239,68,68,.35);
+      box-shadow: 0 0 0 8px rgba(239,68,68,.08);
+    }
+    .sc-status-banner h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800; letter-spacing: -.05em;
+      color: #fff; margin: 0 0 .5rem;
+      position: relative; z-index: 1;
+    }
+    .sc-status-banner p {
+      color: rgba(255,255,255,.55);
+      font-size: .95rem; line-height: 1.6;
+      margin: 0; position: relative; z-index: 1;
+    }
+    .sc-booking-id {
+      display: inline-flex; align-items: center; gap: .5rem;
+      margin-top: 1rem;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      padding: .4rem 1.1rem;
+      font-size: .78rem; font-weight: 800;
+      color: rgba(255,255,255,.7);
+      letter-spacing: .1em;
+      position: relative; z-index: 1;
+    }
+
+    /* ── TICKET CARD ── */
+    .sc-ticket {
+      width: 100%; max-width: 680px;
+      background: #fff;
+      border: 1.5px solid #dce4f5;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 16px 56px rgba(18,66,197,.12);
+    }
+    .sc-ticket-top {
+      background: linear-gradient(135deg, #0a0f1e 0%, #1242c5 55%, #2f6bff 100%);
+      padding: 1.8rem 2rem;
+      display: flex; align-items: center; gap: 1.2rem;
+      position: relative; overflow: hidden;
+    }
+    .sc-ticket-cover {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0.18;
+      display: none;
+    }
+    .sc-ticket-top::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(126,179,255,.2), transparent 55%);
+    }
+    .sc-ticket-emoji {
+      width: 4rem; height: 4rem; border-radius: 18px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      display: grid; place-items: center;
+      font-size: 1.8rem; flex: none;
+      position: relative; z-index: 1;
+    }
+    .sc-ticket-event-info { position: relative; z-index: 1; }
+    .sc-ticket-event-info h2 {
+      font-size: 1.25rem; font-weight: 800;
+      color: #fff; letter-spacing: -.04em;
+      margin: 0 0 .3rem;
+    }
+    .sc-ticket-event-info span {
+      font-size: .82rem; color: rgba(255,255,255,.6);
+      font-weight: 600;
+      display: flex; align-items: center; gap: .3rem;
+    }
+    .sc-ticket-event-info span::before { content: "📍"; font-size: .75rem; }
+
+    /* tear line */
+    .sc-tear {
+      display: flex; align-items: center;
+      border-top: 2px dashed #e2eafc;
+      position: relative;
+    }
+    .sc-tear::before, .sc-tear::after {
+      content: "";
+      width: 1.4rem; height: 1.4rem; border-radius: 50%;
+      background: #f0f4ff;
+      border: 1.5px solid #e2eafc;
+      flex: none;
+      margin-top: -1px;
+    }
+    .sc-tear::before { margin-left: -0.75rem; }
+    .sc-tear::after  { margin-left: auto; margin-right: -0.75rem; }
+
+    /* ticket body */
+    .sc-ticket-body {
+      padding: 1.8rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.6rem;
+      align-items: start;
+    }
+    .sc-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .9rem 1.4rem;
+    }
+    .sc-detail { display: grid; gap: .2rem; }
+    .sc-detail-label {
+      font-size: .68rem; font-weight: 800;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: #9ca3af;
+    }
+    .sc-detail-value {
+      font-size: .95rem; font-weight: 800;
+      color: #0a0f1e; letter-spacing: -.02em;
+    }
+    .sc-detail-value.blue { color: #1242c5; }
+
+    /* QR section */
+    .sc-qr-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; gap: .7rem;
+    }
+    .sc-qr-box {
+      width: 140px; height: 140px;
+      border-radius: 18px;
+      border: 1.5px solid #e2eafc;
+      background: #fff;
+      display: grid; place-items: center;
+      padding: .6rem;
+      box-shadow: 0 4px 16px rgba(18,66,197,.08);
+    }
+    .sc-qr-box canvas { border-radius: 8px; }
+    .sc-qr-label {
+      font-size: .7rem; font-weight: 800;
+      color: #9ca3af; letter-spacing: .1em;
+      text-transform: uppercase; text-align: center;
+    }
+    .sc-qr-scan-note {
+      font-size: .72rem; color: #6b7280;
+      font-weight: 600; text-align: center;
+      max-width: 130px; line-height: 1.4;
+    }
+
+    /* ── ACTION BUTTONS ── */
+    .sc-actions {
+      width: 100%; max-width: 680px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: .8rem;
+      margin-top: 1.4rem;
+    }
+    .sc-btn {
+      min-height: 52px; border-radius: 16px;
+      font-size: .88rem; font-weight: 800;
+      cursor: pointer; border: none;
+      display: flex; align-items: center; justify-content: center;
+      gap: .5rem; transition: transform .15s, box-shadow .15s;
+      text-decoration: none;
+    }
+    .sc-btn:hover { transform: translateY(-2px); }
+    .sc-btn-download {
+      background: linear-gradient(135deg, #2f6bff, #1242c5);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(18,66,197,.3);
+    }
+    .sc-btn-download:hover { box-shadow: 0 14px 32px rgba(18,66,197,.42); }
+    .sc-btn-share {
+      background: #fff; color: #0a0f1e;
+      border: 1.5px solid #dce4f5;
+      box-shadow: 0 4px 12px rgba(18,66,197,.06);
+    }
+    .sc-btn-home {
+      background: #fff; color: #6b7280;
+      border: 1.5px solid #dce4f5;
+    }
+
+    /* failed state actions */
+    .sc-failed-actions {
+      width: 100%; max-width: 680px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: .8rem; margin-top: 1.4rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .sc-page { padding: 2rem 1rem 4rem; }
+      .sc-ticket-body { grid-template-columns: 1fr; }
+      .sc-qr-wrap { flex-direction: row; align-items: flex-start; }
+      .sc-qr-box { width: 110px; height: 110px; }
+      .sc-actions { grid-template-columns: 1fr 1fr; }
+      .sc-btn-home { grid-column: 1 / -1; }
+      .sc-ticket-top { padding: 1.4rem; }
+      .sc-ticket-body { padding: 1.4rem; }
+      .sc-status-banner { padding: 1.8rem 1.4rem; }
+      .sc-details-grid { grid-template-columns: 1fr 1fr; gap: .7rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="nav-wrap">
+      <div class="brand-block">
+        <div class="logo">CultureWave</div>
+        <div class="brand-sub">by OGSHOOTS LUXE</div>
+      </div>
+      <nav class="topnav">
+        <a href="index.html">Home</a>
+        <a href="events.html">Events</a>
+        <a href="booking.html">Booking</a>
+      </nav>
+      <div class="auth-actions">
+        <a class="nav-link" href="login.html">Login</a>
+        <a class="nav-cta" href="booking.html">Book Again</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="booking.html">Booking</a>
+    <div class="mobile-nav-ctas">
+      <a class="nav-link" href="login.html">Login</a>
+      <a class="nav-cta" href="booking.html">Book Again</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="sc-page" id="scPage">
+
+      <!-- STATUS BANNER -->
+      <div class="sc-status-banner" id="scBanner">
+        <div class="sc-icon-ring" id="scIcon">✅</div>
+        <h1 id="scTitle">Booking Confirmed!</h1>
+        <p id="scSubtitle">Your seat is reserved. Show the QR code at the venue entry.</p>
+        <div class="sc-booking-id" id="scBookingId">Booking ID: —</div>
+      </div>
+
+      <!-- TICKET (shown only on success) -->
+      <div class="sc-ticket" id="scTicket">
+        <div class="sc-ticket-top"><div class="sc-ticket-cover" id="ticketCoverBg"></div>
+          <div class="sc-ticket-emoji" id="ticketEmoji">🎟️</div>
+          <div class="sc-ticket-event-info">
+            <h2 id="ticketEvent">Event Name</h2>
+            <span id="ticketVenue">Venue, Hyderabad</span>
+          </div>
+        </div>
+
+        <div class="sc-tear"></div>
+
+        <div class="sc-ticket-body" id="ticketBody">
+          <div class="sc-details-grid">
+            <div class="sc-detail">
+              <span class="sc-detail-label">Booking ID</span>
+              <span class="sc-detail-value blue" id="dBookingId">—</span>
+            </div>
+            <div class="sc-detail">
+              <span class="sc-detail-label">Status</span>
+              <span class="sc-detail-value blue" id="dStatus">Confirmed</span>
+            </div>
+            <div class="sc-detail">
+              <span class="sc-detail-label">Amount Paid</span>
+              <span class="sc-detail-value" id="dAmount">—</span>
+            </div>
+            <div class="sc-detail">
+              <span class="sc-detail-label">Date</span>
+              <span class="sc-detail-value" id="dDate">—</span>
+            </div>
+            <div class="sc-detail">
+              <span class="sc-detail-label" id="dEventLabel">Event</span>
+              <span class="sc-detail-value" id="dEvent">—</span>
+            </div>
+            <div class="sc-detail">
+              <span class="sc-detail-label">Issued by</span>
+              <span class="sc-detail-value" id="dIssuedBy">CultureWave</span>
+            </div>
+          </div>
+
+          <div id="ticketCustomMessage" style="display:none;grid-column:1/-1;padding:.75rem 1rem;background:#f8fafc;border-radius:12px;font-size:.78rem;color:#475569;font-style:italic;"></div>
+
+          <div class="sc-qr-wrap">
+            <div class="sc-qr-box">
+              <canvas id="qrCanvas"></canvas>
+            </div>
+            <span class="sc-qr-label">Scan to verify</span>
+            <span class="sc-qr-scan-note" id="qrScanNote">Organizer scans this at entry</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS (success) -->
+      <div class="sc-actions" id="scActions">
+        <button class="sc-btn sc-btn-download" id="btnDownload">⬇️ Download Ticket</button>
+        <button class="sc-btn sc-btn-share"    id="btnShare">🔗 Share</button>
+        <a class="sc-btn sc-btn-home" href="index.html">🏠 Home</a>
+      </div>
+
+      <!-- ACTION BUTTONS (failed) -->
+      <div class="sc-failed-actions" id="scFailedActions" style="display:none;">
+        <a class="sc-btn sc-btn-download" href="booking.html">🔄 Try Again</a>
+        <a class="sc-btn sc-btn-home" href="index.html">🏠 Home</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+  <div class="footer-glow-top"></div>
+  <div class="footer-wrap">
+    <div class="footer-branding">
+      <div class="footer-brand">CultureWave</div>
+      <p>Premium events, workshops &amp; restaurant bookings — all in one seamless flow.</p>
+      <div class="footer-socials">
+        <a class="footer-social-button" href="https://www.instagram.com/weareogshooters?igsi=OGJtc25nNW1jMnFi&amp;utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a class="footer-social-button" href="mailto:support.culturewave@gmail.com" aria-label="Email">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+        </a>
+        <a class="footer-social-button" href="tel:+916305183601" aria-label="Phone">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Explore</div>
+      <div class="footer-links">
+        <a href="events.html">Events</a>
+        <a href="restaurants.html">Restaurants</a>
+        <a href="features.html">For Organizers</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="booking.html">Book Now</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Legal</div>
+      <div class="footer-links">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
+        <a href="refund-policy.html">Refund Policy</a>
+        <a href="customer-service.html">Customer Service</a>
+      </div>
+    </div>
+    <div class="footer-contact">
+      <div class="footer-col-title" style="border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:.6rem;margin-bottom:.2rem;">Contact</div>
+      <a class="footer-contact-row" href="tel:+916305183601">
+        <span class="footer-contact-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+        <span>+91 6305183601</span>
+      </a>
+      <a class="footer-contact-row" href="mailto:support.culturewave@gmail.com">
+        <span class="footer-contact-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg></span>
+        <span>support.culturewave@gmail.com</span>
+      </a>
+      <a class="footer-contact-row" href="https://www.instagram.com/weareogshooters?igsi=OGJtc25nNW1jMnFi&amp;utm_source=qr" target="_blank" rel="noopener">
+        <span class="footer-contact-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
+        <span>@weareogshooters</span>
+      </a>
+      <div class="footer-contact-row">
+        <span class="footer-contact-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></span>
+        <span>Vijayawada, India</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-divider"></div>
+  <div class="footer-bottom">
+    <span>© 2025 OG SHOOTS. All rights reserved. Made with <span class="footer-heart">♥</span> in India.</span>
+    <span class="footer-credit">Developed by <strong>Srisanth Boddu</strong></span>
+    <span class="footer-owned">Owned by OGSHOOTS LUXE</span>
+  </div>
+</footer>
+
+  <script>
+    /* ── READ URL PARAMS ── */
+    const params    = new URLSearchParams(window.location.search);
+    const bookingId  = params.get("bookingId") || "";
+    const eventName  = params.get("event")     || "Your Booking";
+    const amount     = params.get("amount")    || "—";
+    const status     = (params.get("status")   || "").toLowerCase();
+    const bkType     = params.get("type")      || "event";
+    const eventId    = params.get("eventId")  || "";
+    const bkDate     = params.get("date")      || "";
+    const bkTime     = params.get("time")      || "";
+    const isRestaurant = bkType === "restaurant";
+    const isSuccess  = status === "confirmed" || status === "success" || bookingId !== "";
+
+    const eventEmojis = {
+      "HIMTEX 2026":"🏛️", "Nullcon Hyderabad 2026":"🔐",
+      "Sport Expo India":"🏅", "CREDAI Property Show":"🏠",
+      "Design Democracy 2026":"🎨",
+      "The Grand Bistro":"🍽️", "Skyline Rooftop Lounge":"🌆",
+      "Brew & Bites Cafe":"☕", "Spice Garden Buffet":"🍱",
+      "The Private Table":"🍷", "Neon Nights Bistro":"🌃",
+    };
+    const eventVenues = {
+      "HIMTEX 2026":"HITEX Exhibition Centre, Hyderabad",
+      "Nullcon Hyderabad 2026":"Novotel Convention Centre, Hyderabad",
+      "Sport Expo India":"HITEX, Hyderabad",
+      "CREDAI Property Show":"HITEX, Hyderabad",
+      "Design Democracy 2026":"Le Hesthia Design LLP, Hyderabad",
+      "The Grand Bistro":"Banjara Hills, Hyderabad",
+      "Skyline Rooftop Lounge":"Jubilee Hills, Hyderabad",
+      "Brew & Bites Cafe":"Madhapur, Hyderabad",
+      "Spice Garden Buffet":"Gachibowli, Hyderabad",
+      "The Private Table":"Film Nagar, Hyderabad",
+      "Neon Nights Bistro":"Hitech City, Hyderabad",
+    };
+
+    const emoji = eventEmojis[eventName] || "🎟️";
+    const venue = eventVenues[eventName] || "Hyderabad";
+    const dateStr = new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" });
+    const shortId = bookingId ? bookingId.slice(-10).toUpperCase() : "—";
+
+    async function applyEventTicketDesign() {
+      if (!eventId || !window.firebase) return;
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp({
+            apiKey: "AIzaSyBCgNQy8EJLg7E-SA1cMePGetWLOR7WWMI",
+            authDomain: "ogshootsluxe-36740.firebaseapp.com",
+            projectId: "ogshootsluxe-36740",
+            storageBucket: "ogshootsluxe-36740.firebasestorage.app",
+            messagingSenderId: "5471814825",
+            appId: "1:5471814825:web:07e84f2f88486da817d5b8"
+          });
+        }
+        const snap = await firebase.firestore().collection('events').doc(eventId).get();
+        if (!snap.exists) return;
+        const d = snap.data();
+        const design = d.ticketDesign || {};
+        const g1 = design.gradientStart || '#1242c5';
+        const g2 = design.gradientEnd   || '#2f6bff';
+
+        // Apply cover photo as background on ticket top
+        const coverUrl = d.coverUrl || d.cardImgUrl || '';
+        const coverBg = document.getElementById('ticketCoverBg');
+        if (coverBg && coverUrl) {
+          coverBg.style.backgroundImage = `url('${coverUrl}')`;
+          coverBg.style.display = 'block';
+        }
+
+        // Apply gradient to ticket top
+        const top = document.querySelector('.sc-ticket-top');
+        if (top) top.style.background = `linear-gradient(135deg,${g1},${g2})`;
+
+        // Apply logo
+        const logoEl = document.getElementById('ticketEmoji');
+        if (logoEl) {
+          if (design.showLogo !== false && design.logoUrl) {
+            logoEl.textContent = '';
+            const img = document.createElement('img');
+            img.src = design.logoUrl;
+            img.alt = 'Organiser logo';
+            img.crossOrigin = 'anonymous';
+            img.style.cssText = 'width:100%;height:100%;object-fit:contain;border-radius:14px;';
+            logoEl.appendChild(img);
+          } else if (design.showLogo === false) {
+            logoEl.style.display = 'none';
+          }
+        }
+
+        // Apply organiser name to issued-by field
+        if (design.organiserName) {
+          const issuedEl = document.getElementById('dIssuedBy');
+          if (issuedEl) issuedEl.textContent = design.organiserName;
+        }
+
+        // Apply tagline + footer as custom message
+        const message = document.getElementById('ticketCustomMessage');
+        if (message && (design.tagline || design.footer)) {
+          message.textContent = [design.tagline, design.footer].filter(Boolean).join(' · ');
+          message.style.display = 'block';
+        }
+
+        // Hide QR if disabled
+        if (design.showQR === false) {
+          const qrWrap = document.querySelector('.sc-qr-wrap');
+          if (qrWrap) qrWrap.style.display = 'none';
+        }
+
+        // Hide venue if disabled
+        if (design.showVenue === false) {
+          const venueEl = document.getElementById('ticketVenue');
+          if (venueEl) venueEl.style.display = 'none';
+        }
+
+        // Update venue from event data
+        const venueEl = document.getElementById('ticketVenue');
+        if (venueEl && d.venueName) venueEl.textContent = d.venueName + (d.city ? ', ' + d.city : '');
+
+      } catch (error) {
+        console.warn('Could not load event ticket design:', error);
+      }
+    }
+
+    /* ── POPULATE ── */
+    if (isSuccess) {
+      // banner
+      document.getElementById("scBanner").classList.add("success");
+      document.getElementById("scIcon").textContent = "✅";
+      document.getElementById("scTitle").textContent = isRestaurant ? "Table Reserved!" : "Booking Confirmed!";
+      document.getElementById("scSubtitle").textContent = isRestaurant
+        ? "Your table is reserved. Show the QR code at the restaurant reception."
+        : "Your seat is reserved. Show the QR code at the venue entry.";
+      document.getElementById("scBookingId").textContent = "Booking ID: " + shortId;
+
+      // ticket top
+      document.getElementById("ticketEmoji").textContent = emoji;
+      document.getElementById("ticketEvent").textContent = eventName;
+      document.getElementById("ticketVenue").textContent = venue;
+
+      // ticket details
+      document.getElementById("dBookingId").textContent = shortId;
+      document.getElementById("dStatus").textContent    = isRestaurant ? "✅ Reserved" : "✅ Confirmed";
+      document.getElementById("dAmount").textContent    = amount;
+      document.getElementById("dDate").textContent      = isRestaurant && bkDate
+        ? new Date(bkDate).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}) + (bkTime ? " · " + bkTime : "")
+        : dateStr;
+      document.getElementById("dEvent").textContent     = eventName;
+      if (isRestaurant) {
+        document.getElementById("dEventLabel").textContent = "Restaurant";
+      }
+
+      // QR code — encode booking verification data
+      const qrData = JSON.stringify({ id: bookingId, event: eventName, amount, date: dateStr, issuer: "CultureWave", type: bkType });
+      try {
+        QRCode.toCanvas(document.getElementById("qrCanvas"), qrData, {
+          width: 120, margin: 1,
+          color: { dark: "#0a0f1e", light: "#ffffff" }
+        }, function(err) {
+          if (err) {
+            // fallback: use QRCode img tag
+            const img = document.createElement("img");
+            img.src = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(qrData);
+            img.style.borderRadius = "8px";
+            img.width = 120; img.height = 120;
+            const canvas = document.getElementById("qrCanvas");
+            canvas.parentNode.replaceChild(img, canvas);
+          }
+        });
+      } catch(e) {
+        const img = document.createElement("img");
+        img.src = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(qrData);
+        img.style.borderRadius = "8px";
+        img.width = 120; img.height = 120;
+        const canvas = document.getElementById("qrCanvas");
+        canvas.parentNode.replaceChild(img, canvas);
+      }
+      if (isRestaurant) {
+        document.getElementById("qrScanNote").textContent = "Staff scans at reception";
+      }
+      applyEventTicketDesign();
+
+    } else {
+      // FAILED state
+      document.getElementById("scBanner").classList.add("failed");
+      document.getElementById("scIcon").textContent = "❌";
+      document.getElementById("scTitle").textContent = "Payment Failed";
+      document.getElementById("scSubtitle").textContent = "Your payment could not be processed. Please try again.";
+      document.getElementById("scBookingId").style.display = "none";
+      document.getElementById("scTicket").style.display = "none";
+      document.getElementById("scActions").style.display = "none";
+      document.getElementById("scFailedActions").style.display = "grid";
+    }
+
+    /* ── DOWNLOAD TICKET ── */
+    document.getElementById("btnDownload")?.addEventListener("click", async () => {
+      const btn = document.getElementById("btnDownload");
+      btn.textContent = "⏳ Generating...";
+      btn.disabled = true;
+      try {
+        // Wait for all images inside ticket to load
+        const imgs = document.querySelectorAll("#scTicket img");
+        await Promise.all(Array.from(imgs).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(res => { img.onload = res; img.onerror = res; });
+        }));
+        const canvas = await html2canvas(document.getElementById("scTicket"), {
+          scale: 2, useCORS: true, allowTaint: false, backgroundColor: "#ffffff",
+          logging: false
+        });
+        const link = document.createElement("a");
+        link.download = `CultureWave-Ticket-${shortId}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } catch(e) {
+        alert("Download failed. Please take a screenshot instead.");
+      }
+      btn.textContent = "⬇️ Download Ticket";
+      btn.disabled = false;
+    });
+
+    /* ── SHARE ── */
+    document.getElementById("btnShare")?.addEventListener("click", async () => {
+      const shareText = `I just booked "${eventName}" on CultureWave! Booking ID: ${shortId}`;
+      const shareUrl  = window.location.href;
+      const btn = document.getElementById("btnShare");
+      if (navigator.share) {
+        try { await navigator.share({ title: "CultureWave Booking Confirmed", text: shareText, url: shareUrl }); } catch(e) { /* dismissed */ }
+        return;
+      }
+      // clipboard fallback — works on HTTPS; on file:// use textarea trick
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(shareText + "\n" + shareUrl);
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = shareText + "\n" + shareUrl;
+          ta.style.cssText = "position:fixed;opacity:0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+        btn.textContent = "✅ Copied!";
+        setTimeout(() => btn.textContent = "🔗 Share", 2000);
+      } catch(e) {
+        alert("Copy this link:\n" + shareUrl);
+      }
+    });
+
+    /* ── HAMBURGER ── */
+    const ham  = document.getElementById("hamburger");
+    const mNav = document.getElementById("mobileNav");
+    ham.addEventListener("click", () => {
+      ham.classList.toggle("open");
+      mNav.classList.toggle("open");
+      document.body.style.overflow = mNav.classList.contains("open") ? "hidden" : "";
+    });
+    mNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
+      ham.classList.remove("open"); mNav.classList.remove("open"); document.body.style.overflow = "";
+    }));
+  </script>
+</body>
+</html>

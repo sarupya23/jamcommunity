@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>CultureWave | Event</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    :root{--blue:#1242c5;--blue-2:#2f6bff;--gold:#f59e0b;--green:#10b981;--red:#ef4444;--border:#dce4f5;--muted:#64748b;--text:#0a0f1e;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    a{text-decoration:none;color:inherit;}
+    button{font:inherit;cursor:pointer;}
+    body{background:#f0f4ff;font-size:14px;}
+
+    /* HERO BANNER */
+    .hero-banner{width:100%;height:420px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0a0f1e,#1242c5,#2f6bff);}
+    .hero-banner img{width:100%;height:100%;object-fit:cover;}
+    .hero-banner-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,15,30,.15) 0%,rgba(10,15,30,.75) 100%);}
+    .hero-badges{position:absolute;top:1.2rem;left:1.4rem;display:flex;gap:.5rem;flex-wrap:wrap;}
+    .badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;font-weight:900;padding:.3rem .8rem;border-radius:999px;letter-spacing:.06em;text-transform:uppercase;backdrop-filter:blur(8px);}
+    .badge-live{background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.4);color:#6ee7b7;}
+    .badge-draft{background:rgba(245,158,11,.2);border:1px solid rgba(245,158,11,.4);color:#fcd34d;}
+    .badge-premium{background:linear-gradient(135deg,rgba(245,158,11,.3),rgba(251,191,36,.2));border:1px solid rgba(245,158,11,.5);color:#fcd34d;}
+    .badge-category{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;}
+    .hero-edit-btn{position:absolute;top:1.2rem;right:1.4rem;display:none;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:10px;padding:.4rem .9rem;font-size:.78rem;font-weight:800;backdrop-filter:blur(8px);cursor:pointer;}
+    .hero-content{position:absolute;bottom:0;left:0;right:0;padding:2rem 1.8rem 1.8rem;}
+    .hero-title{font-size:2.4rem;font-weight:900;color:#fff;letter-spacing:-.05em;line-height:1.15;margin-bottom:.75rem;text-shadow:0 2px 12px rgba(0,0,0,.3);}
+    .hero-meta-row{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;}
+    .hero-meta-item{display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.8);font-weight:600;}
+    .hero-meta-item span{font-size:.9rem;}
+
+    /* LAYOUT */
+    .shell{max-width:1140px;margin:0 auto;padding:2rem 1.5rem;display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start;}
+
+    /* HIGHLIGHTS STRIP */
+    .highlights{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.5rem;}
+    .hl-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:.9rem 1rem;display:flex;align-items:center;gap:.75rem;box-shadow:0 2px 12px rgba(18,66,197,.05);}
+    .hl-icon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:1.1rem;flex:none;}
+    .hl-icon.blue{background:#e8f0ff;}
+    .hl-icon.green{background:#dcfce7;}
+    .hl-icon.gold{background:#fef3c7;}
+    .hl-icon.purple{background:#f3e8ff;}
+    .hl-label{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+    .hl-value{font-size:.9rem;font-weight:800;color:var(--text);margin-top:.1rem;}
+
+    /* SECTION */
+    .section{background:#fff;border:1px solid var(--border);border-radius:20px;padding:1.4rem;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(18,66,197,.04);}
+    .section-title{font-size:.72rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+    .section-title::before{content:'';width:3px;height:14px;background:linear-gradient(135deg,var(--blue),var(--blue-2));border-radius:999px;}
+    .description{font-size:.92rem;color:#475569;line-height:1.85;white-space:pre-wrap;}
+
+    /* ORGANISER */
+    .org-chip{display:flex;align-items:center;gap:.85rem;padding:1rem 1.1rem;background:linear-gradient(135deg,#eef3ff,#f0f4ff);border:2px solid var(--blue);border-radius:16px;cursor:pointer;transition:border-color .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(18,66,197,.13);}
+    .org-chip:hover{border-color:var(--blue-2);box-shadow:0 6px 24px rgba(18,66,197,.18);}
+    .org-chip-label{font-size:.68rem;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.15rem;}
+    .org-avatar{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--blue),var(--blue-2));display:grid;place-items:center;font-weight:900;font-size:1.1rem;color:#fff;flex:none;box-shadow:0 4px 12px rgba(18,66,197,.25);}
+    .org-info strong{display:block;font-size:.92rem;font-weight:800;}
+    .org-info span{font-size:.76rem;color:var(--muted);margin-top:.1rem;display:block;}
+    .org-arrow{margin-left:auto;color:var(--muted);font-size:1.2rem;}
+
+    /* META ROWS */
+    .meta-row{display:flex;align-items:center;gap:.75rem;font-size:.88rem;color:#475569;margin-bottom:.75rem;}
+    .meta-icon{width:38px;height:38px;border-radius:11px;background:#f1f5f9;border:1px solid var(--border);display:grid;place-items:center;font-size:1rem;flex:none;}
+    .meta-row strong{display:block;font-size:.9rem;font-weight:800;color:var(--text);}
+    .meta-row span{font-size:.78rem;color:var(--muted);margin-top:.1rem;display:block;}
+
+    /* TICKET CARDS */
+    .ticket-card{background:#fff;border:1.5px solid var(--border);border-radius:18px;margin-bottom:.85rem;cursor:pointer;transition:border-color .2s,box-shadow .2s;overflow:hidden;}
+    .ticket-card:hover{border-color:var(--blue);box-shadow:0 4px 20px rgba(18,66,197,.1);}
+    .ticket-card.selected{box-shadow:0 0 0 3px rgba(18,66,197,.15);}
+    .ticket-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex:none;display:grid;place-items:center;transition:all .2s;}
+    .ticket-card.selected .ticket-radio{border-color:var(--blue);background:var(--blue);}
+    .ticket-card.selected .ticket-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff;}
+    .ticket-vip-badge{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;font-size:.62rem;font-weight:900;padding:.18rem .55rem;border-radius:999px;letter-spacing:.06em;}
+
+    /* SIDEBAR */
+    .sidebar{position:sticky;top:80px;display:flex;flex-direction:column;gap:1rem;}
+    .register-card{background:#fff;border:1px solid var(--border);border-radius:22px;padding:1.6rem;box-shadow:0 8px 36px rgba(18,66,197,.1);overflow:hidden;position:relative;}
+    .register-card::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(47,107,255,.08),transparent 70%);pointer-events:none;}
+    .reg-price{font-size:1.8rem;font-weight:900;letter-spacing:-.05em;margin-bottom:.2rem;color:var(--text);}
+    .reg-price small{font-size:.8rem;font-weight:700;color:var(--muted);}
+    .reg-meta{font-size:.78rem;color:var(--muted);margin-bottom:1.25rem;}
+    .reg-btn{width:100%;height:54px;background:linear-gradient(135deg,var(--blue-2),var(--blue));color:#fff;border:0;border-radius:14px;font-size:.95rem;font-weight:900;box-shadow:0 8px 24px rgba(18,66,197,.32);margin-bottom:.75rem;transition:transform .15s,box-shadow .15s;}
+    .reg-btn:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(18,66,197,.42);}
+    .reg-share{width:100%;height:44px;background:#fff;color:var(--text);border:1.5px solid var(--border);border-radius:14px;font-size:.84rem;font-weight:800;transition:border-color .2s,color .2s;}
+    .reg-share:hover{border-color:var(--blue);color:var(--blue);}
+    .reg-divider{border:0;border-top:1px solid var(--border);margin:.85rem 0;}
+    .reg-detail{display:flex;align-items:center;gap:.65rem;font-size:.8rem;color:#475569;margin-bottom:.6rem;}
+    .reg-detail-icon{font-size:1rem;width:22px;text-align:center;flex:none;}
+
+    /* SHARE MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;place-items:center;z-index:50;padding:1rem;backdrop-filter:blur(4px);}
+    .modal-bg.open{display:grid;}
+    .modal{background:#fff;border-radius:22px;padding:1.6rem;width:min(480px,100%);box-shadow:0 24px 64px rgba(15,23,42,.2);}
+    .modal h3{font-size:1.1rem;font-weight:900;margin-bottom:1rem;}
+    .share-link{display:flex;gap:.5rem;align-items:center;background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:.6rem .85rem;margin-bottom:1rem;}
+    .share-link span{flex:1;font-size:.78rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1rem;}
+    .share-item{border:1px solid var(--border);border-radius:12px;padding:.65rem .4rem;text-align:center;cursor:pointer;background:#fff;transition:background .15s;}
+    .share-item:hover{background:#f0f5ff;border-color:var(--blue);}
+    .share-item .si-icon{font-size:1.4rem;}
+    .share-item .si-label{font-size:.65rem;font-weight:800;color:var(--muted);margin-top:.2rem;}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#0f172a;color:#fff;padding:.65rem 1.25rem;border-radius:12px;font-size:.82rem;font-weight:700;opacity:0;transition:all .3s;z-index:99;pointer-events:none;}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+    /* FAQ */
+    .faq-item{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:.6rem;}
+    .faq-item summary{font-weight:800;font-size:.9rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;padding:.9rem 1rem;background:#fff;}
+    .faq-item summary:hover{background:#f8faff;}
+    .faq-item[open] summary{border-bottom:1px solid var(--border);color:var(--blue);}
+    .faq-item .faq-ans{padding:.85rem 1rem;font-size:.86rem;color:#475569;line-height:1.7;background:#fff;}
+
+    @media(max-width:860px){.shell{grid-template-columns:1fr;}.sidebar{position:static;}.highlights{grid-template-columns:repeat(2,1fr);}.hero-title{font-size:1.8rem;}}
+    @media(max-width:560px){.highlights{grid-template-columns:1fr 1fr;}.hero-banner{height:300px;}.hero-title{font-size:1.4rem;}.shell{padding:1rem;}}
+    @media(max-width:400px){.highlights{grid-template-columns:1fr;}}
+    @media(max-width:860px){
+      .shell{overflow:hidden;max-width:100vw;box-sizing:border-box;}
+      .shell > div:first-child{min-width:0;max-width:100%;overflow:hidden;}
+      .section{overflow:hidden;word-break:break-word;max-width:100%;box-sizing:border-box;}
+      .description{word-break:break-word;overflow-wrap:anywhere;}
+      .org-chip{max-width:100%;overflow:hidden;box-sizing:border-box;}
+      #seatingPlanSection > div:last-child{overflow-x:auto;}
+      .mob-section-card{overflow:hidden;word-break:break-word;max-width:100%;box-sizing:border-box;}
+    }
+
+    /* MOBILE STICKY BOTTOM BAR */
+    .mob-register-bar{display:none;}
+    @media(max-width:860px){
+      .mob-register-bar{display:flex;align-items:center;justify-content:space-between;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:.85rem 1.1rem;z-index:40;box-shadow:0 -4px 20px rgba(18,66,197,.1);gap:1rem;}
+      .mob-reg-left{display:flex;flex-direction:column;gap:.1rem;}
+      .mob-reg-label{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+      .mob-reg-price{font-size:1.25rem;font-weight:900;color:var(--text);line-height:1;}
+      .mob-reg-btn{flex:1;max-width:200px;height:48px;background:linear-gradient(135deg,var(--blue-2),var(--blue));color:#fff;border:0;border-radius:14px;font-size:.92rem;font-weight:900;box-shadow:0 6px 18px rgba(18,66,197,.3);}
+      .sidebar{display:none;}
+      body{padding-bottom:80px;}
+      #ticketsSection{display:none !important;}
+      #highlightsStrip{display:none !important;}
+      .hero-banner{height:auto;min-height:0;background:none !important;}
+      .hero-banner-overlay{display:none;}
+      .hero-content{display:none;}
+      .hero-badges{top:.7rem;left:.9rem;}
+      .hero-edit-btn{top:.7rem;right:.9rem;}
+      .mob-topbar{display:flex !important;}
+      .topbar{display:none;}
+      .mobile-nav{top:52px;}
+      #orgChip{display:none !important;}
+    }
+    /* MOBILE TOP BAR */
+    .mob-topbar{display:none;align-items:center;gap:.6rem;padding:.55rem .9rem;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30;}
+    .mob-topbar-org{display:flex;align-items:center;gap:.45rem;flex:1;min-width:0;cursor:pointer;}
+    .mob-topbar-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--blue-2));display:grid;place-items:center;font-size:.7rem;font-weight:900;color:#fff;flex:none;overflow:hidden;}
+    .mob-topbar-avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit;}
+    .mob-topbar-name{font-size:.84rem;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .mob-topbar-actions{display:flex;align-items:center;gap:.5rem;flex:none;}
+    .mob-topbar-home{width:32px;height:32px;display:grid;place-items:center;font-size:1.1rem;text-decoration:none;border:1px solid var(--border);border-radius:9px;}
+    .mob-topbar-login{height:32px;padding:0 .9rem;background:linear-gradient(135deg,var(--blue-2),var(--blue));color:#fff;border:0;border-radius:9px;font-size:.76rem;font-weight:800;white-space:nowrap;}
+    /* MOBILE POSTER */
+    .mob-poster{display:none;}
+    @media(max-width:860px){
+      .mob-poster{display:block;width:calc(100% - 2rem);aspect-ratio:3/4;object-fit:cover;margin:1rem auto 0;border-radius:20px;box-shadow:0 8px 32px rgba(18,66,197,.18),0 2px 8px rgba(0,0,0,.12);border:3px solid #fff;outline:1.5px solid var(--border);}
+      .mob-event-header{display:block !important;}
+    }
+    .mob-event-header{display:none;padding:1.2rem 1rem 0;background:#fff;overflow:hidden;}
+    .mob-hosted-line{font-size:.88rem;color:#555;margin-bottom:.6rem;}
+    .mob-hosted-line a{color:var(--blue);font-weight:700;text-decoration:none;}
+    .mob-event-title{font-size:1.5rem;font-weight:900;color:var(--text);letter-spacing:-.04em;line-height:1.2;margin-bottom:.6rem;word-break:break-word;}
+    .mob-event-summary{font-size:.92rem;color:#555;line-height:1.6;margin-bottom:1rem;word-break:break-word;}
+    .mob-info-list{display:flex;flex-direction:column;gap:.85rem;margin-top:1.2rem;}
+    .mob-info-row{display:flex;align-items:center;gap:.85rem;overflow:hidden;}
+    .mob-info-icon-box{width:56px;min-width:56px;height:56px;border-radius:14px;background:#f3f4f6;display:grid;place-items:center;flex:none;}
+    .mob-info-text-title{font-size:.95rem;font-weight:800;color:var(--text);}
+    .mob-info-text-sub{font-size:.84rem;color:#6b7280;margin-top:.1rem;word-break:break-word;overflow-wrap:anywhere;}
+    /* mobile organised by + share */
+    .mob-section-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:1rem 1.1rem;margin:1.2rem 1rem 0;}
+    @media(min-width:861px){ .mob-section-card{ display:none !important; } }
+    .mob-section-label{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);margin-bottom:.75rem;}
+    .mob-org-row{display:flex;align-items:center;gap:.75rem;cursor:pointer;}
+    .mob-org-avatar{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,var(--blue),var(--blue-2));display:grid;place-items:center;font-size:.9rem;font-weight:900;color:#fff;flex:none;overflow:hidden;}
+    .mob-org-avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit;}
+    .mob-org-name{font-size:.95rem;font-weight:800;color:var(--text);}
+    .mob-org-sub{font-size:.76rem;color:var(--muted);margin-top:.1rem;}
+    .mob-share-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
+    .mob-share-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.65rem;border-radius:12px;font-size:.82rem;font-weight:800;cursor:pointer;border:1px solid;}
+    .mob-share-wa{background:#f0fdf4;border-color:#bbf7d0;color:#166534;}
+    .mob-share-copy{background:#f8faff;border-color:var(--border);color:var(--text);}
+  </style>
+</head>
+<body>
+
+<!-- MOBILE TOP BAR -->
+<div class="mob-topbar" id="mobTopbar">
+  <div class="mob-topbar-org" onclick="goToProfile()">
+    <div class="mob-topbar-avatar" id="mobTopAvatar">🎪</div>
+    <span class="mob-topbar-name" id="mobTopOrgName">Organiser</span>
+  </div>
+  <div class="mob-topbar-actions">
+    <a class="mob-topbar-home" href="#" onclick="goToProfile();return false;">🏠</a>
+    <a href="login.html"><button class="mob-topbar-login">Login</button></a>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="nav-wrap">
+    <div class="brand-block">
+      <div class="logo">CultureWave</div>
+      <div class="brand-sub">by OGSHOOTS LUXE</div>
+    </div>
+    <nav class="topnav">
+      <a href="events.html">Events</a>
+      <a href="restaurants.html">Restaurants</a>
+      <a href="features.html">Features</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+    <div class="auth-actions">
+      <a class="nav-link" href="login.html">Login</a>
+      <a class="nav-cta" href="login.html">Get Started</a>
+    </div>
+    <div style="display:flex;gap:.6rem;margin-left:auto;align-items:center;">
+      <button class="btn btn-ghost" onclick="openShare()">🔗 Share</button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav">
+  <a href="events.html">Events</a>
+  <a href="restaurants.html">Restaurants</a>
+  <a href="features.html">Features</a>
+  <a href="pricing.html">Pricing</a>
+  <div class="mobile-nav-ctas">
+    <a class="nav-link" href="login.html">Login</a>
+    <a class="nav-cta" href="login.html">Get Started</a>
+  </div>
+</nav>
+
+<div class="hero-banner" id="heroBanner">
+  <div class="hero-banner-overlay"></div>
+  <div class="hero-badges">
+    <span class="badge badge-category" id="evCategory">🎪 Event</span>
+    <span class="badge badge-premium" id="premiumBadge" style="display:none;">⭐ Premium Event</span>
+    <span class="badge badge-live" id="liveBadge" style="display:none;">● Live</span>
+    <span class="badge badge-draft" id="draftBadge" style="display:none;">✎ Draft</span>
+  </div>
+  <a class="hero-edit-btn" id="navEditBtn" href="#" style="display:none;">✏️ Edit Event</a>
+  <div class="hero-content">
+    <h1 class="hero-title" id="evTitle">Loading event...</h1>
+    <div class="hero-meta-row">
+      <div class="hero-meta-item"><span>📅</span><span id="evDate">—</span></div>
+      <div class="hero-meta-item"><span>📍</span><span id="evVenue">—</span><span id="evCity" style="opacity:.7;"></span></div>
+      <div class="hero-meta-item" id="evCapacityRow" style="display:none;"><span>👥</span><span id="evCapacity">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE POSTER -->
+<img class="mob-poster" id="mobPoster" src="" alt="Event poster"/>
+
+<!-- MOBILE EVENT HEADER -->
+<div class="mob-event-header" id="mobEventHeader">
+  <div class="mob-hosted-line">Hosted by <a onclick="goToProfile();return false;" href="#" id="mobHostedName">Organiser</a></div>
+  <div class="mob-event-title" id="mobEvTitle">Loading...</div>
+  <div class="mob-event-summary" id="mobEvSummary"></div>
+  <div class="mob-info-list">
+    <!-- Date -->
+    <div class="mob-info-row">
+      <div class="mob-info-icon-box" style="background:#e8f0ff;flex-direction:column;gap:0;padding:0;overflow:hidden;">
+        <div style="background:var(--blue);color:#fff;font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;width:100%;text-align:center;padding:.22rem 0;" id="mobDateMonth">—</div>
+        <div style="font-size:1.25rem;font-weight:900;color:var(--text);line-height:1;padding:.28rem 0;" id="mobDateDay">—</div>
+      </div>
+      <div style="overflow:hidden;">
+        <div class="mob-info-text-title" id="mobInfoDate">TBA</div>
+        <div class="mob-info-text-sub" id="mobInfoTime"></div>
+      </div>
+    </div>
+    <!-- Duration -->
+    <div class="mob-info-row" id="mobDurationRow">
+      <div class="mob-info-icon-box">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1242c5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div>
+        <div class="mob-info-text-title">Duration</div>
+        <div class="mob-info-text-sub" id="mobInfoDuration">TBA</div>
+      </div>
+    </div>
+    <!-- Venue -->
+    <div class="mob-info-row">
+      <div class="mob-info-icon-box">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1242c5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div style="overflow:hidden;">
+        <div class="mob-info-text-title">Venue</div>
+        <div class="mob-info-text-sub" id="mobInfoVenue">TBA</div>
+      </div>
+    </div>
+    <!-- Tickets -->
+    <div class="mob-info-row" id="mobInfoTicketRow">
+      <div class="mob-info-icon-box">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1242c5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+      </div>
+      <div>
+        <div class="mob-info-text-title">Tickets from</div>
+        <div class="mob-info-text-sub" id="mobInfoTicket">Free</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="shell">
+  <!-- LEFT -->
+  <div>
+
+    <!-- HIGHLIGHTS -->
+    <div class="highlights" id="highlightsStrip">
+      <div class="hl-card"><div class="hl-icon blue">📅</div><div><div class="hl-label">Date</div><div class="hl-value" id="hlDate">TBA</div></div></div>
+      <div class="hl-card"><div class="hl-icon green">📍</div><div><div class="hl-label">Venue</div><div class="hl-value" id="hlVenue">TBA</div></div></div>
+      <div class="hl-card"><div class="hl-icon gold">🎟️</div><div><div class="hl-label">Tickets from</div><div class="hl-value" id="hlPrice">Free</div></div></div>
+      <div class="hl-card"><div class="hl-icon purple">👥</div><div><div class="hl-label">Capacity</div><div class="hl-value" id="hlCap">Open</div></div></div>
+    </div>
+
+    <!-- ORGANISER -->
+    <div class="org-chip" id="orgChip" onclick="goToProfile()" style="margin-bottom:1.2rem;">
+      <div class="org-avatar" id="orgAvatar">🎪</div>
+      <div class="org-info"><div class="org-chip-label">Hosted by</div><strong id="orgName">Organiser</strong><span>View all events →</span></div>
+      <span class="org-arrow">›</span>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="section" id="descSection" style="display:none;">
+      <div class="section-title">About this event</div>
+      <div class="description" id="evDesc"></div>
+    </div>
+
+    <!-- TICKETS -->
+    <div class="section" id="ticketsSection" style="display:none;">
+      <div id="ticketsList"></div>
+    </div>
+
+    <!-- SEATING PLAN -->
+    <div class="section" id="seatingPlanSection" style="display:none;">
+      <div class="section-title">Seating Plan</div>
+      <p style="font-size:.84rem;color:#64748b;margin-bottom:.85rem;">See the venue layout before choosing your seat.</p>
+      <div style="border:1px solid var(--border);border-radius:14px;padding:.75rem;overflow:auto;background:#f8faff;">
+        <img id="seatingPlanImage" src="" alt="Seating plan" style="display:block;width:100%;max-height:520px;object-fit:contain;border-radius:10px;"/>
+        <div id="seatingPlanBuilder" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- MOBILE ORGANISED BY + SHARE (shown on mobile after seating plan) -->
+    <div class="mob-section-card" id="mobOrgCard" style="margin:0 0 1.2rem;">
+      <div class="mob-section-label">Organised by</div>
+      <div class="mob-org-row" onclick="goToProfile()">
+        <div class="mob-org-avatar" id="mobOrgAvatar">JN</div>
+        <div>
+          <div class="mob-org-name" id="mobOrgName">Organiser</div>
+          <div class="mob-org-sub">View profile →</div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-section-card" style="margin:0 0 1.2rem;">
+      <div class="mob-section-label">Share this event</div>
+      <div class="mob-share-grid">
+        <button class="mob-share-btn mob-share-wa" onclick="shareWA()">💬 WhatsApp</button>
+        <button class="mob-share-btn mob-share-copy" onclick="copyLink()">🔗 Copy Link</button>
+      </div>
+    </div>
+
+    <!-- FAQS -->
+    <div class="section" id="faqsSection" style="display:none;">
+      <div class="section-title">FAQs</div>
+      <div id="faqsList"></div>
+    </div>
+
+    <!-- TERMS & CONDITIONS -->
+    <div class="section" id="termsSection" style="display:none;">
+      <div class="section-title">Terms &amp; Conditions</div>
+      <div class="description" id="termsText" style="font-size:.84rem;"></div>
+    </div>
+
+    <!-- REFUND POLICY -->
+    <div class="section" id="refundSection" style="display:none;">
+      <div class="section-title">Refund Policy</div>
+      <div class="description" id="refundText" style="font-size:.84rem;"></div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="register-card">
+      <div class="reg-price" id="regPrice">Free</div>
+      <div class="reg-meta" id="regMeta">Register to attend</div>
+      <button class="reg-btn" id="regBtn" onclick="register()">Register Now 🎉</button>
+      <button class="reg-share" onclick="openShare()">🔗 Share Event</button>
+      <hr class="reg-divider"/>
+      <div class="reg-detail"><span class="reg-detail-icon">📅</span><span id="sideDate">—</span></div>
+      <div class="reg-detail"><span class="reg-detail-icon">📍</span><span id="sideVenue">—</span></div>
+      <div class="reg-detail" id="sideCapRow" style="display:none;"><span class="reg-detail-icon">👥</span><span id="sideCap">—</span></div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:18px;padding:1.1rem;">
+      <div style="font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);margin-bottom:.75rem;">Organised by</div>
+      <div style="display:flex;align-items:center;gap:.7rem;cursor:pointer;" onclick="goToProfile()">
+        <div class="org-avatar" id="sideOrgAvatar" style="width:40px;height:40px;border-radius:11px;font-size:.95rem;">🎪</div>
+        <div><div style="font-size:.9rem;font-weight:800;" id="sideOrgName">Organiser</div><div style="font-size:.74rem;color:var(--muted);">View profile →</div></div>
+      </div>
+    </div>
+    <!-- SHARE BUTTONS -->
+    <div style="background:#fff;border:1px solid var(--border);border-radius:18px;padding:1.1rem;">
+      <div style="font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);margin-bottom:.75rem;">Share this event</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+        <button onclick="shareWA()" style="display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem;border-radius:10px;border:1px solid #dcfce7;background:#f0fdf4;color:#166534;font-size:.78rem;font-weight:800;cursor:pointer;">💬 WhatsApp</button>
+        <button onclick="copyLink()" style="display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem;border-radius:10px;border:1px solid var(--border);background:#f8faff;color:var(--text);font-size:.78rem;font-weight:800;cursor:pointer;">🔗 Copy Link</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE STICKY BOTTOM BAR -->
+<div class="mob-register-bar" id="mobRegBar">
+  <div class="mob-reg-left">
+    <span class="mob-reg-label">Basic rate</span>
+    <span class="mob-reg-price" id="mobRegPrice">Free</span>
+  </div>
+  <button class="mob-reg-btn" onclick="register()">Register Now 🎉</button>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-bg" id="shareModal">
+  <div class="modal">
+    <h3>🔗 Share this event</h3>
+    <div class="share-link">
+      <span id="shareUrl">—</span>
+      <button class="btn btn-primary" style="padding:.35rem .75rem;font-size:.74rem;" onclick="copyLink()">Copy</button>
+    </div>
+    <div class="share-grid">
+      <div class="share-item" onclick="shareWA()"><div class="si-icon">💬</div><div class="si-label">WhatsApp</div></div>
+      <div class="share-item" onclick="shareTwitter()"><div class="si-icon">🐦</div><div class="si-label">Twitter</div></div>
+      <div class="share-item" onclick="shareEmail()"><div class="si-icon">✉️</div><div class="si-label">Email</div></div>
+      <div class="share-item" onclick="copyLink()"><div class="si-icon">📋</div><div class="si-label">Copy Link</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeShare()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyBCgNQy8EJLg7E-SA1cMePGetWLOR7WWMI",
+  authDomain: "ogshootsluxe-36740.firebaseapp.com",
+  projectId: "ogshootsluxe-36740",
+  storageBucket: "ogshootsluxe-36740.firebasestorage.app",
+  messagingSenderId: "5471814825",
+  appId: "1:5471814825:web:07e84f2f88486da817d5b8"
+});
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+async function getCurrentUser() {
+  return new Promise(resolve => {
+    const unsub = auth.onAuthStateChanged(async firebaseUser => {
+      unsub();
+      if (!firebaseUser) { resolve(null); return; }
+      try {
+        const snap = await db.collection('users').doc(firebaseUser.uid).get();
+        const data = snap.exists ? snap.data() : {};
+        resolve({ uid: firebaseUser.uid, email: firebaseUser.email, name: data.name || firebaseUser.displayName || firebaseUser.email, role: data.role || 'client' });
+      } catch { resolve({ uid: firebaseUser.uid, email: firebaseUser.email, name: firebaseUser.displayName || firebaseUser.email, role: 'client' }); }
+    });
+  });
+}
+
+const params = new URLSearchParams(location.search);
+const eventId = params.get('eventId');
+let evData = {};
+let ownerUid = null;
+
+function esc(v){ return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function fmtDate(ts){
+  if(!ts) return 'Date TBA';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function fmtTime(t){ return t ? t : ''; }
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+function getShareUrl(){ return `${location.origin}/event-detail.html?eventId=${eventId}`; }
+
+function openShare(){
+  document.getElementById('shareUrl').textContent = getShareUrl();
+  document.getElementById('shareModal').classList.add('open');
+}
+function closeShare(){ document.getElementById('shareModal').classList.remove('open'); }
+function copyLink(){ navigator.clipboard.writeText(getShareUrl()).then(()=>showToast('Link copied!')); closeShare(); }
+function shareWA(){ window.open(`https://wa.me/?text=${encodeURIComponent('Check out this event: '+getShareUrl())}`, '_blank'); }
+function shareTwitter(){ window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent('Check out this event on CultureWave!')}&url=${encodeURIComponent(getShareUrl())}`, '_blank'); }
+function shareEmail(){ window.open(`mailto:?subject=${encodeURIComponent(evData.name||'Event')}&body=${encodeURIComponent('Check out this event: '+getShareUrl())}`, '_blank'); }
+
+function goToProfile(){
+  if(ownerUid) location.href = `client-profile.html?uid=${ownerUid}`;
+}
+
+function renderSeatingLayout(layout, target){
+  if(!target) return;
+  const rows = Array.isArray(layout.rows) ? layout.rows : [];
+  target.innerHTML = `<div style="text-align:center;font-size:.7rem;font-weight:900;letter-spacing:.14em;color:#fff;background:linear-gradient(135deg,#172554,#2563eb);border-radius:9px;padding:.55rem;margin-bottom:1rem;">${esc(layout.stage || 'STAGE')}</div>` + rows.map(row => {
+    const count = Math.max(1, Math.min(100, Number(row.seats) || 1));
+    const justify = row.align === 'left' ? 'flex-start' : row.align === 'right' ? 'flex-end' : 'center';
+    const sofa = row.seatStyle === 'sofa';
+    return `<div style="margin:.65rem 0;min-width:420px;"><div style="font-size:.64rem;font-weight:800;color:#64748b;margin:0 0 .25rem 29px;">${esc(row.ticketType || 'General Admission')}</div><div style="display:flex;align-items:center;gap:.45rem;"><span style="width:24px;font-size:.72rem;font-weight:900;color:#64748b;">${esc(row.label || '')}</span><div style="display:flex;flex-wrap:wrap;justify-content:${justify};gap:.3rem;flex:1;">${Array.from({length:count},(_,i)=>`<span style="display:grid;place-items:center;width:${sofa ? '58px' : '30px'};height:30px;border-radius:${sofa ? '15px' : '7px'};background:${sofa ? '#fce7f3' : '#e8efff'};color:${sofa ? '#be185d' : '#1242c5'};font-size:.62rem;font-weight:800;">${sofa ? 'Sofa ' : ''}${esc(row.label || '')}${i+1}</span>`).join('')}</div></div></div>`;
+  }).join('');
+}
+
+let selectedTicketIndex = 0;
+
+function selectTicket(i){
+  selectedTicketIndex = i;
+  const allCards = document.querySelectorAll('.ticket-card');
+  const td = evData.ticketDesign || {};
+  const g1 = td.gradientStart || '#1242c5';
+  allCards.forEach((el,idx)=>{
+    el.classList.toggle('selected', idx === i);
+    el.style.border = idx === i ? `2px solid ${g1}` : '1.5px solid var(--border)';
+    const indicator = el.querySelector('span');
+    if(indicator) indicator.textContent = idx === i ? 'Selected' : 'Click to select';
+  });
+  const t = (evData.tickets||[])[i] || {};
+  const price = Number(t.price || 0);
+  document.getElementById('regPrice').innerHTML = price ? `₹${price.toLocaleString('en-IN')}<small> onwards</small>` : 'Free';
+  document.getElementById('regMeta').textContent = price ? 'Per person · Taxes may apply' : 'Free to attend';
+}
+
+function register(){
+  if(!eventId) return;
+  const tickets = Array.isArray(evData.tickets) && evData.tickets.length ? evData.tickets : [];
+  const t = tickets[selectedTicketIndex] || tickets[0] || {};
+  const price = Number(t.price || evData.price || 0);
+  const qs = new URLSearchParams({
+    eventId,
+    eventName: evData.name || '',
+    venueName: evData.venueName || evData.city || '',
+    category: evData.category || '',
+    ticketName: t.name || 'General Admission',
+    ticketPrice: String(price),
+    eventPrice: String(Number(evData.price || 0)),
+    seatingPlanUrl: evData.seatingPlanUrl || '',
+    seatingPlan: evData.seatingPlan ? JSON.stringify(evData.seatingPlan) : '',
+  });
+  location.href = `booking.html?${qs.toString()}`;
+}
+
+async function renderEvent(data){
+  evData = data;
+  ownerUid = data.ownerId;
+  document.title = `${data.name||'Event'} | CultureWave`;
+
+  // hero banner — use poster (cardImgUrl) not cover
+  const hero = document.getElementById('heroBanner');
+  const posterSrc = data.cardImgUrl || data.coverUrl;
+  if(posterSrc) hero.style.backgroundImage = `url('${esc(posterSrc)}')`;
+  hero.style.backgroundSize = 'cover';
+  hero.style.backgroundPosition = 'center';
+
+  // mobile poster
+  const mobPoster = document.getElementById('mobPoster');
+  if(posterSrc){ mobPoster.src = posterSrc; } else { mobPoster.style.display='none'; }
+
+  // mobile event header
+  document.getElementById('mobEvTitle').textContent = data.name||'Untitled Event';
+  document.getElementById('mobEvSummary').textContent = data.summary||data.tagline||'';
+
+  // highlights strip
+  const price0 = (data.tickets||[])[0]?.price || data.price || 0;
+  const mins = Number(data.duration||0);
+  const durationLabel = mins ? (mins >= 60 ? (mins/60 % 1 === 0 ? (mins/60)+' Hrs' : (mins/60).toFixed(1)+' Hrs') : mins+' Mins') : '';
+  function fmtShortDate(ts){
+    if(!ts) return 'TBA';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    const day = d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+    const weekday = d.toLocaleDateString('en-IN',{weekday:'long'});
+    return day+', '+weekday;
+  }
+  // mobile date box
+  if(data.startDate){
+    const d = data.startDate.toDate ? data.startDate.toDate() : new Date(data.startDate);
+    document.getElementById('mobDateMonth').textContent = d.toLocaleDateString('en-IN',{month:'short'}).toUpperCase();
+    document.getElementById('mobDateDay').textContent = d.toLocaleDateString('en-IN',{day:'2-digit'});
+  }
+  document.getElementById('mobInfoDate').textContent = fmtShortDate(data.startDate);
+  document.getElementById('mobInfoTime').textContent = data.startTime || '';
+  if(durationLabel){ document.getElementById('mobInfoDuration').textContent = durationLabel; }
+  else { document.getElementById('mobDurationRow').style.display='none'; }
+  document.getElementById('mobInfoVenue').textContent = (data.venueName||'TBA')+(data.city?', '+data.city:'');
+  document.getElementById('mobInfoTicket').textContent = price0 ? '₹'+Number(price0).toLocaleString('en-IN') : 'Free';
+  // mobile bottom bar
+  document.getElementById('mobRegPrice').innerHTML = price0 ? `₹${Number(price0).toLocaleString('en-IN')}` : 'Free';
+
+  // desktop badges + hero
+  document.getElementById('evCategory').textContent = '🎪 ' + (data.category||'Event');
+  const norm = (data.status||'draft').toLowerCase();
+  if(norm==='published') document.getElementById('liveBadge').style.display='';
+  else document.getElementById('draftBadge').style.display='';
+  const hasVIP = (data.tickets||[]).some(t=>/vip|premium|gold|platinum/i.test(t.name||''));
+  const highPrice = (data.tickets||[]).some(t=>Number(t.price||0)>1000);
+  if(hasVIP||highPrice) document.getElementById('premiumBadge').style.display='';
+  document.getElementById('evTitle').textContent = data.name||'Untitled Event';
+  document.getElementById('evDate').textContent = fmtDate(data.startDate);
+  document.getElementById('evVenue').textContent = data.venueName||'Venue TBA';
+  document.getElementById('evCity').textContent = data.city ? ' · '+data.city : '';
+  if(data.capacity){ document.getElementById('evCapacity').textContent = Number(data.capacity).toLocaleString('en-IN')+' seats'; document.getElementById('evCapacityRow').style.display='flex'; }
+  document.getElementById('hlDate').textContent = fmtDate(data.startDate);
+  document.getElementById('hlVenue').textContent = data.venueName||data.city||'TBA';
+  document.getElementById('hlPrice').textContent = price0 ? '₹'+Number(price0).toLocaleString('en-IN') : 'Free';
+  document.getElementById('hlCap').textContent = data.capacity ? Number(data.capacity).toLocaleString('en-IN')+' seats' : 'Open';
+  // terms & conditions
+  if(data.termsText){ document.getElementById('termsText').textContent=data.termsText; document.getElementById('termsSection').style.display='block'; }
+  if(data.refundPolicy){ document.getElementById('refundText').textContent=data.refundPolicy; document.getElementById('refundSection').style.display='block'; }
+
+  // sidebar
+  document.getElementById('sideDate').textContent = fmtDate(data.startDate)+(data.startTime?' · '+data.startTime:'');
+  document.getElementById('sideVenue').textContent = (data.venueName||'Venue TBA')+(data.city?', '+data.city:'');
+  if(data.capacity){
+    document.getElementById('sideCap').textContent = Number(data.capacity).toLocaleString('en-IN')+' capacity';
+    document.getElementById('sideCapRow').style.display='flex';
+  }
+
+  // price
+  document.getElementById('regPrice').innerHTML = price0 ? `&#8377;${Number(price0).toLocaleString('en-IN')}<small> onwards</small>` : 'Free';
+  document.getElementById('regMeta').textContent = price0 ? 'Per person · Taxes may apply' : 'Free to attend';
+
+  // description
+  if(data.description){
+    document.getElementById('evDesc').textContent = data.description;
+    document.getElementById('descSection').style.display='block';
+  }
+
+  // tickets
+  const tickets = data.tickets||[];
+  const td = data.ticketDesign||{};
+  const g1 = td.gradientStart||'#1242c5';
+  const g2 = td.gradientEnd||'#2f6bff';
+  const logoUrl = td.logoUrl||'';
+  const tagline = td.tagline||'';
+  const footer  = td.footer||'';
+  const showQR    = td.showQR    !== false;
+  const showSeat  = td.showSeat  !== false;
+  const showVenue = td.showVenue !== false;
+  const showLogo  = td.showLogo  !== false;
+
+  if(tickets.length){
+    document.getElementById('ticketsList').innerHTML = tickets.map((t,i)=>{
+      const priceStr = t.price ? `&#8377;${Number(t.price).toLocaleString('en-IN')}` : 'Free';
+      const firstDate = Array.isArray(data.eventDates)&&data.eventDates[0];
+      const dateLabel = firstDate ? new Date(firstDate.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : fmtDate(data.startDate);
+      const venueLabel = data.venueName||data.city||'Venue TBA';
+      const isVIP = /vip|premium|gold|platinum/i.test(t.name||'');
+      return `
+      <div class="ticket-card ${i===0?'selected':''}" onclick="selectTicket(${i})" style="border:${i===0?'2px solid '+g1:'1.5px solid var(--border)'}">
+        <div style="background:linear-gradient(135deg,${g1},${g2});padding:1rem 1.1rem;display:flex;align-items:center;gap:.85rem;">
+          ${showLogo&&logoUrl?`<img src="${esc(logoUrl)}" style="width:38px;height:38px;border-radius:9px;object-fit:contain;background:rgba(255,255,255,.15);flex:none;"/>`:`<div style="width:38px;height:38px;border-radius:9px;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:1.1rem;flex:none;">&#127915;</div>`}
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:.5rem;">
+              <div style="font-size:.95rem;font-weight:800;color:#fff;">${esc(t.name||'General Admission')}</div>
+              ${isVIP?'<span class="ticket-vip-badge">VIP</span>':''}
+            </div>
+            ${showVenue?`<div style="font-size:.72rem;color:rgba(255,255,255,.75);margin-top:.15rem;">&#128205; ${esc(venueLabel)}</div>`:''}
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:1.1rem;font-weight:900;color:#fff;">${priceStr}</div>
+            ${t.qty?`<div style="font-size:.65rem;color:rgba(255,255,255,.65);">${Number(t.qty).toLocaleString('en-IN')} seats</div>`:''}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;border-top:2px dashed #e2eafc;">
+          <div style="width:1.2rem;height:1.2rem;border-radius:50%;background:#f0f4ff;border:1.5px solid #e2eafc;margin-left:-.65rem;"></div>
+          <div style="flex:1;"></div>
+          <div style="width:1.2rem;height:1.2rem;border-radius:50%;background:#f0f4ff;border:1.5px solid #e2eafc;margin-right:-.65rem;"></div>
+        </div>
+        <div style="padding:.85rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;background:#fff;">
+          <div>
+            <div style="font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#9ca3af;">Date</div>
+            <div style="font-size:.88rem;font-weight:800;color:#0a0f1e;margin-top:.15rem;">${dateLabel}</div>
+            ${tagline?`<div style="font-size:.7rem;color:#64748b;font-style:italic;margin-top:.25rem;">${esc(tagline)}</div>`:''}
+            ${footer?`<div style="font-size:.65rem;color:#9ca3af;margin-top:.1rem;">${esc(footer)}</div>`:''}
+          </div>
+          ${showQR?`<div style="width:44px;height:44px;background:#0a0f1e;border-radius:7px;display:grid;place-items:center;"><svg width="34" height="34" viewBox="0 0 44 44" fill="none"><rect x="0" y="0" width="18" height="18" rx="2" fill="white"/><rect x="4" y="4" width="10" height="10" rx="1" fill="#0f172a"/><rect x="26" y="0" width="18" height="18" rx="2" fill="white"/><rect x="30" y="4" width="10" height="10" rx="1" fill="#0f172a"/><rect x="0" y="26" width="18" height="18" rx="2" fill="white"/><rect x="4" y="30" width="10" height="10" rx="1" fill="#0f172a"/><rect x="26" y="26" width="4" height="4" fill="white"/><rect x="32" y="26" width="4" height="4" fill="white"/><rect x="38" y="26" width="6" height="4" fill="white"/><rect x="26" y="32" width="6" height="4" fill="white"/><rect x="34" y="32" width="4" height="4" fill="white"/></svg></div>`:''}
+        </div>
+        <div style="padding:.5rem 1.1rem;background:#f8fafc;border-top:1px solid #f0f2f8;display:flex;align-items:center;gap:.5rem;">
+          <div class="ticket-radio"></div>
+          <span style="font-size:.74rem;font-weight:700;color:#64748b;">${i===0?'Selected':'Click to select'}</span>
+        </div>
+      </div>`;
+    }).join('');
+    document.getElementById('ticketsSection').style.display='block';
+  }
+
+  if(data.seatingPlanUrl){
+    document.getElementById('seatingPlanImage').src = data.seatingPlanUrl;
+    document.getElementById('seatingPlanSection').style.display = 'block';
+  } else if (data.seatingPlan && Array.isArray(data.seatingPlan.rows)) {
+    renderSeatingLayout(data.seatingPlan, document.getElementById('seatingPlanBuilder'));
+    document.getElementById('seatingPlanImage').style.display = 'none';
+    document.getElementById('seatingPlanBuilder').style.display = 'block';
+    document.getElementById('seatingPlanSection').style.display = 'block';
+  }
+
+  // faqs
+  const faqs = data.faqs||[];
+  if(faqs.length){
+    document.getElementById('faqsList').innerHTML = faqs.map(f=>`
+      <details class="faq-item">
+        <summary>${esc(f.question||f.q||'')} <span style="color:var(--muted);font-size:1.1rem;">+</span></summary>
+        <div class="faq-ans">${esc(f.answer||f.a||'')}</div>
+      </details>`).join('');
+    document.getElementById('faqsSection').style.display='block';
+  }
+
+  // load organiser
+  if(data.ownerId){
+    try{
+      const snap = await db.collection('organisers').doc(data.ownerId).get();
+      const org = snap.exists ? snap.data() : {};
+      console.log('org doc exists:', snap.exists, 'avatarUrl:', org.avatarUrl, 'ownerId:', data.ownerId);
+      const name = org.name || data.organiserName || 'Organiser';
+      const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      ['orgAvatar','sideOrgAvatar','mobTopAvatar','mobOrgAvatar'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(!el) return;
+        if(org.avatarUrl) el.innerHTML = `<img src="${org.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="avatar"/>`;
+        else el.textContent = initials;
+      });
+      ['orgName','sideOrgName','mobTopOrgName','mobHostedName','mobOrgName'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.textContent = name;
+      });
+      // fallback: also try users collection if organiser doc missing
+      if(!snap.exists){
+        const usnap = await db.collection('users').doc(data.ownerId).get();
+        if(usnap.exists){
+          const u = usnap.data();
+          const uname = u.name || u.displayName || 'Organiser';
+          const uinitials = uname.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+          ['orgAvatar','sideOrgAvatar','mobTopAvatar','mobOrgAvatar'].forEach(id=>{
+            const el = document.getElementById(id);
+            if(!el) return;
+            if(u.avatarUrl||u.photoURL) el.innerHTML = `<img src="${u.avatarUrl||u.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="avatar"/>`;
+            else el.textContent = uinitials;
+          });
+          ['orgName','sideOrgName','mobTopOrgName','mobHostedName','mobOrgName'].forEach(id=>{
+            const el = document.getElementById(id);
+            if(el) el.textContent = uname;
+          });
+        }
+      }
+    }catch(e){ console.error('org load error',e); }
+  }
+}
+
+async function init(){
+  if(!eventId){ document.getElementById('evTitle').textContent='Event not found'; return; }
+
+  // check owner
+  let myUid = null;
+  try{
+    const user = await getCurrentUser();
+    if(user){ myUid = user.uid; }
+  }catch(e){}
+
+  const snap = await db.collection('events').doc(eventId).get();
+  if(!snap.exists){ document.getElementById('evTitle').textContent='Event not found'; return; }
+
+  const data = {id:snap.id,...snap.data()};
+  await renderEvent(data);
+
+  // show edit button if owner
+  if(myUid && myUid === data.ownerId){
+    const editBtn = document.getElementById('navEditBtn');
+    if(editBtn){ editBtn.href = `event-create.html?eventId=${eventId}`; editBtn.style.display='block'; }
+  }
+}
+
+// close modal on backdrop click
+document.getElementById('shareModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeShare(); });
+
+init();
+</script>
+<script>
+  const ham = document.getElementById('hamburger');
+  const mNav = document.getElementById('mobileNav');
+  if(ham) ham.addEventListener('click', () => {
+    ham.classList.toggle('open');
+    mNav.classList.toggle('open');
+    document.body.style.overflow = mNav.classList.contains('open') ? 'hidden' : '';
+  });
+  if(mNav) mNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    ham.classList.remove('open'); mNav.classList.remove('open'); document.body.style.overflow = '';
+  }));
+</script>
+</body>
+</html>

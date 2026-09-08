@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CultureWave | Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --blue: #1242c5;
+        --blue-2: #0d36b2;
+        --blue-light: #2f6bff;
+      }
+      html, body { height: 100%; font-family: Manrope, sans-serif; background: #0a0f1e; color: #111; }
+      a { text-decoration: none; color: inherit; }
+      button, input, select { font: inherit; }
+
+      /* ── LAYOUT ── */
+      .auth-shell {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* ── LEFT PANEL ── */
+      .auth-left {
+        position: relative;
+        background: linear-gradient(145deg, #0a0f1e 0%, #0d1f4a 40%, #0f2d6b 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 2.8rem 3rem;
+        overflow: hidden;
+      }
+      .auth-left::before {
+        content: "";
+        position: absolute;
+        top: -120px;
+        right: -120px;
+        width: 480px;
+        height: 480px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(47,107,255,0.28) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .auth-left::after {
+        content: "";
+        position: absolute;
+        bottom: -80px;
+        left: -80px;
+        width: 360px;
+        height: 360px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(18,66,197,0.22) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .left-logo {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        position: relative;
+        z-index: 1;
+      }
+      .left-logo-name {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.04em;
+      }
+      .left-logo-sub {
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.45);
+      }
+      .left-hero {
+        position: relative;
+        z-index: 1;
+      }
+      .left-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 999px;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: rgba(255,255,255,0.7);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 1.4rem;
+      }
+      .left-badge::before { content: "✦"; color: #7eb3ff; }
+      .left-hero h1 {
+        font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.06em;
+        line-height: 1.05;
+        margin-bottom: 1.2rem;
+      }
+      .left-hero h1 span { color: #7eb3ff; }
+      .left-hero p {
+        color: rgba(255,255,255,0.55);
+        font-size: 1rem;
+        line-height: 1.7;
+        max-width: 380px;
+        margin-bottom: 2.4rem;
+      }
+      .left-stats {
+        display: flex;
+        gap: 2rem;
+      }
+      .left-stat strong {
+        display: block;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.04em;
+      }
+      .left-stat span {
+        font-size: 0.78rem;
+        color: rgba(255,255,255,0.45);
+        font-weight: 600;
+      }
+      .left-testimonial {
+        position: relative;
+        z-index: 1;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 1.2rem 1.4rem;
+        backdrop-filter: blur(10px);
+      }
+      .left-testimonial p {
+        color: rgba(255,255,255,0.8);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 0.8rem;
+      }
+      .left-testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .left-avatar {
+        width: 2.2rem;
+        height: 2.2rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2f6bff, #7eb3ff);
+        display: grid;
+        place-items: center;
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: #fff;
+        flex: none;
+      }
+      .left-testimonial-author strong {
+        display: block;
+        font-size: 0.85rem;
+        color: #fff;
+        font-weight: 800;
+      }
+      .left-testimonial-author span {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.45);
+      }
+      .left-stars { color: #f3b73f; font-size: 0.75rem; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+
+      /* ── RIGHT PANEL ── */
+      .auth-right {
+        background: #f4f7ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.5rem;
+      }
+      .auth-card {
+        width: min(440px, 100%);
+        background: #fff;
+        border-radius: 28px;
+        padding: 2.4rem 2.2rem;
+        box-shadow: 0 24px 60px rgba(18,66,197,0.1), 0 4px 16px rgba(0,0,0,0.04);
+        border: 1px solid rgba(18,66,197,0.08);
+      }
+      .auth-card-head {
+        margin-bottom: 1.8rem;
+      }
+      .auth-card-head h2 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+        color: #0a0f1e;
+        margin-bottom: 0.3rem;
+      }
+      .auth-card-head h2 span { color: var(--blue); }
+      .auth-card-head p {
+        color: #6b7280;
+        font-size: 0.88rem;
+      }
+
+      /* tabs */
+      .auth-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.3rem;
+        background: #f0f4ff;
+        border-radius: 14px;
+        padding: 0.3rem;
+        margin-bottom: 1.6rem;
+        border: 1px solid rgba(18,66,197,0.1);
+      }
+      .auth-tab {
+        border: none;
+        border-radius: 10px;
+        padding: 0.65rem;
+        background: transparent;
+        color: #6b7280;
+        font-weight: 800;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .auth-tab.active {
+        background: #fff;
+        color: var(--blue);
+        box-shadow: 0 2px 8px rgba(18,66,197,0.12);
+      }
+
+      /* form */
+      .auth-form { display: grid; gap: 1rem; }
+      .auth-form[hidden] { display: none; }
+      .form-field { display: grid; gap: 0.4rem; }
+      .form-label {
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #5f6f95;
+      }
+      .form-input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0 0.9rem;
+        min-height: 50px;
+        border-radius: 14px;
+        border: 1.5px solid #dce4f5;
+        background: #f7faff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .form-input-wrap:focus-within {
+        border-color: var(--blue);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(18,66,197,0.08);
+      }
+      .form-icon { font-size: 1rem; flex: none; }
+      .form-input-wrap input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #0a0f1e;
+        font-size: 0.92rem;
+      }
+      .form-input-wrap input::placeholder { color: #b0bcd4; }
+      .eye-btn {
+        border: none;
+        background: transparent;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 0.85rem;
+        padding: 0;
+        line-height: 1;
+      }
+
+      .form-row-split {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .remember-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.82rem;
+        color: #6b7280;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .remember-label input { accent-color: var(--blue); width: 1rem; height: 1rem; }
+      .forgot-link {
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: var(--blue);
+      }
+
+      .submit-btn {
+        width: 100%;
+        min-height: 50px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--blue-light), var(--blue));
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(18,66,197,0.28);
+        transition: transform 0.15s, box-shadow 0.15s;
+        letter-spacing: -0.01em;
+      }
+      .submit-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 30px rgba(18,66,197,0.35);
+      }
+      .submit-btn:active { transform: translateY(0); }
+
+      .or-row {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: #b0bcd4;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+      }
+      .or-row::before, .or-row::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #e8edf8;
+      }
+
+      .google-btn {
+        width: 100%;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        border: 1.5px solid #dce4f5;
+        border-radius: 14px;
+        background: #fff;
+        color: #374151;
+        font-size: 0.9rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .google-btn:hover {
+        border-color: #b0bcd4;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      }
+      .google-icon { width: 1.2rem; height: 1.2rem; flex: none; }
+
+      .auth-status {
+        font-size: 0.82rem;
+        min-height: 1.2rem;
+        color: #6b7280;
+        text-align: center;
+        padding: 0.4rem 0.6rem;
+        border-radius: 8px;
+      }
+      .auth-status[data-kind="success"] { background: #dcfce7; color: #166534; }
+      .auth-status[data-kind="warning"] { background: #fef9c3; color: #854d0e; }
+      .auth-status[data-kind="info"] { background: #eff6ff; color: #1e40af; }
+
+      /* ── PREMIUM SIGNUP ── */
+      .auth-shell.signup-active .auth-right { background: #fff; }
+      .auth-shell.signup-active .auth-card { background: transparent; box-shadow: none; border-color: transparent; }
+      .auth-shell.signup-active .auth-tabs { background: #f0f4ff; border-color: rgba(18,66,197,0.1); }
+      .auth-shell.signup-active .auth-tab { color: #6b7280; }
+      .auth-shell.signup-active .auth-tab.active { background: #fff; color: #1242c5; box-shadow: 0 2px 8px rgba(18,66,197,0.12); }
+      .auth-shell.signup-active .auth-card-head h2 { color: #0a0f1e; }
+      .auth-shell.signup-active .auth-card-head h2 span { color: rgba(180,150,80,0.9); }
+      .auth-shell.signup-active .auth-card-head p { color: #6b7280; }
+      .auth-shell.signup-active .card-footer { color: #6b7280; }
+      .auth-shell.signup-active .card-footer a { color: rgba(140,110,40,0.9); }
+      .auth-shell.signup-active .back-home-link { color: #9ca3af; }
+      .auth-shell.signup-active .back-home-link:hover { color: rgba(140,110,40,0.9); }
+      .auth-shell.signup-active .auth-status[data-kind="info"] { background: rgba(47,107,255,0.12); color: #93b4ff; }
+      [data-auth-form="signup"] {
+        background: #fff;
+        border-radius: 20px;
+        padding: 1.6rem 1.4rem;
+        border: 1px solid rgba(180,150,80,0.25);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        gap: 0;
+      }
+      [data-auth-form="signup"] .form-field { gap: 0.35rem; margin-bottom: 0.85rem; }
+      [data-auth-form="signup"] .form-label {
+        color: rgba(140,110,40,0.9);
+        letter-spacing: 0.16em;
+        font-size: 0.68rem;
+      }
+      [data-auth-form="signup"] .form-input-wrap {
+        background: #f7f8fa;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 12px;
+        min-height: 48px;
+      }
+      [data-auth-form="signup"] .form-input-wrap:focus-within {
+        border-color: rgba(180,150,80,0.7);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(180,150,80,0.12);
+      }
+      [data-auth-form="signup"] .form-input-wrap { border-color: #e5e7eb; }
+      [data-auth-form="signup"] .form-input-wrap input { color: #0a0f1e; font-size: 0.9rem; }
+      [data-auth-form="signup"] .form-input-wrap input::placeholder { color: #b0bcd4; }
+      [data-auth-form="signup"] .form-icon { filter: grayscale(0.2); }
+      [data-auth-form="signup"] .eye-btn { color: #94a3b8; }
+      [data-auth-form="signup"] .submit-btn {
+        background: linear-gradient(135deg, #c9a84c, #a0722a);
+        box-shadow: 0 8px 24px rgba(180,130,40,0.35);
+        letter-spacing: 0.04em;
+        margin-top: 0.4rem;
+      }
+      [data-auth-form="signup"] .submit-btn:hover {
+        box-shadow: 0 12px 32px rgba(180,130,40,0.5);
+      }
+      .signup-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(180,150,80,0.25), transparent);
+        margin: 0.6rem 0 1rem;
+      }
+      .signup-step2-header { text-align: center; margin-bottom: 1rem; }
+      .signup-step2-icon {
+        width: 3rem; height: 3rem; border-radius: 50%;
+        background: linear-gradient(135deg, rgba(180,150,80,0.2), rgba(180,150,80,0.05));
+        border: 1px solid rgba(180,150,80,0.3);
+        display: grid; place-items: center;
+        font-size: 1.3rem; margin: 0 auto 0.6rem;
+      }
+      .signup-step2-title { font-size: 0.9rem; font-weight: 800; color: #0a0f1e; }
+      .signup-step2-sub { font-size: 0.75rem; color: #6b7280; margin-top: 0.2rem; }
+      .signup-step2-sub strong { color: rgba(180,150,80,0.9); font-weight: 700; }
+      [data-auth-form="signup"] #signupOtp { letter-spacing: 0.4em; font-size: 1.2rem; font-weight: 800; color: #0a0f1e; }
+      .otp-actions { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 0.75rem; }
+      .otp-action-btn {
+        background: none; border: none; font: inherit;
+        font-size: 0.8rem; font-weight: 700; cursor: pointer;
+        padding: 0.2rem 0.5rem; border-radius: 6px; transition: background 0.15s;
+      }
+      .otp-action-btn.gold { color: rgba(180,150,80,0.9); }
+      .otp-action-btn.gold:hover { background: rgba(180,150,80,0.1); }
+      .otp-action-btn.muted { color: #6b7280; }
+      .otp-action-btn.muted:hover { background: #f3f4f6; }
+      .otp-dot { color: #d1d5db; font-size: 0.7rem; }
+      /* whatsapp prefix in signup */
+      [data-auth-form="signup"] .wa-prefix { font-size: .82rem; color: #6b7280; padding-right: .3rem; }
+
+      .card-footer {
+        margin-top: 1.4rem;
+        text-align: center;
+        font-size: 0.84rem;
+        color: #6b7280;
+      }
+      .card-footer a {
+        color: var(--blue);
+        font-weight: 800;
+      }
+      .back-home-link {
+        display: block;
+        text-align: center;
+        margin-top: 0.8rem;
+        font-size: 0.8rem;
+        color: #9ca3af;
+        font-weight: 600;
+      }
+      .back-home-link:hover { color: var(--blue); }
+
+      /* ── MOBILE ── */
+      @media (max-width: 860px) {
+        .auth-shell { grid-template-columns: 1fr; }
+        .auth-left { display: none; }
+        .auth-right {
+          min-height: 100vh;
+          background: linear-gradient(160deg, #0a0f1e 0%, #0d1f4a 100%);
+          padding: 2rem 1.2rem;
+        }
+        .auth-card {
+          background: rgba(255,255,255,0.97);
+          box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+        }
+      }
+      @media (max-width: 400px) {
+        .auth-card { padding: 1.8rem 1.4rem; border-radius: 22px; }
+        .auth-card-head h2 { font-size: 1.5rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-shell">
+
+      <!-- LEFT BRANDED PANEL -->
+      <div class="auth-left">
+        <div class="left-logo">
+          <div class="left-logo-name">CultureWave</div>
+          <div class="left-logo-sub">by OGSHOOTS LUXE</div>
+        </div>
+
+        <div class="left-hero">
+          <div class="left-badge">Premium Access</div>
+          <h1>Your city's best<br /><span>events & dining</span><br />in one place.</h1>
+          <p>Book events, reserve tables, and manage everything from one premium platform built for India.</p>
+          <div class="left-stats">
+            <div class="left-stat">
+              <strong id="statEvents">—</strong>
+              <span>Events listed</span>
+            </div>
+            <div class="left-stat">
+              <strong id="statBookings">—</strong>
+              <span>Bookings made</span>
+            </div>
+            <div class="left-stat">
+              <strong id="statSat">—</strong>
+              <span>Satisfaction</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="left-testimonial">
+          <div class="left-stars">★★★★★</div>
+          <p>"Moved our entire event workflow here. Bookings, payments, and confirmations — all in one clean flow."</p>
+          <div class="left-testimonial-author">
+            <div class="left-avatar">P</div>
+            <div>
+              <strong>Priya Nair</strong>
+              <span>Community Host, Hyderabad</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT FORM PANEL -->
+      <div class="auth-right">
+        <div class="auth-card">
+          <div class="auth-card-head">
+            <h2>Welcome <span>back</span> 👋</h2>
+            <p>Sign in to your CultureWave account</p>
+          </div>
+
+          <div class="auth-tabs" role="tablist">
+            <button class="auth-tab active" type="button" data-auth-tab="login">Login</button>
+            <button class="auth-tab" type="button" data-auth-tab="signup">Sign Up</button>
+          </div>
+
+          <div class="auth-status" id="authStatus" aria-live="polite"></div>
+
+          <!-- LOGIN FORM -->
+          <form class="auth-form" data-auth-form="login">
+            <div class="form-field">
+              <span class="form-label">Username</span>
+              <div class="form-input-wrap">
+                <span class="form-icon">👤</span>
+                <input id="loginPhone" type="text" placeholder="Email or username" autocomplete="username" />
+              </div>
+            </div>
+
+            <div class="form-field">
+              <span class="form-label">Password</span>
+              <div class="form-input-wrap">
+                <span class="form-icon">🔒</span>
+                <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
+                <button class="eye-btn" type="button" aria-label="Show password">◔</button>
+              </div>
+            </div>
+
+            <div class="form-row-split">
+              <label class="remember-label">
+                <input type="checkbox" />
+                Remember me
+              </label>
+              <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <button class="submit-btn" type="submit">Sign In →</button>
+
+            <div class="or-row"><span>or</span></div>
+
+            <button class="google-btn" id="googleLoginBtn" type="button">
+              <svg class="google-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#EA4335" d="M12 10.2v3.95h5.62c-.25 1.48-1.68 4.33-5.62 4.33-3.38 0-6.13-2.8-6.13-6.25S8.62 6 12 6c1.93 0 3.22.82 3.96 1.52l2.7-2.6C16.93 3.32 14.71 2.33 12 2.33 6.49 2.33 2 6.77 2 12.08S6.49 21.83 12 21.83c5.76 0 9.58-4.05 9.58-9.76 0-.66-.07-1.16-.15-1.65H12Z"/>
+                <path fill="#4285F4" d="M21.18 12.08c0-.66-.07-1.16-.15-1.65H12v3.95h5.17c-.22 1.31-1.01 3.04-2.88 4.2l2.78 2.15c1.63-1.51 2.71-3.73 2.71-6.65Z"/>
+                <path fill="#FBBC05" d="M5.87 14.11c-.21-.64-.34-1.31-.34-2.03s.12-1.39.34-2.03L3.02 7.88A9.6 9.6 0 0 0 2 12.08c0 1.51.36 2.94 1.02 4.2l2.85-2.17Z"/>
+                <path fill="#34A853" d="M12 21.83c2.71 0 4.99-.89 6.65-2.43l-2.78-2.15c-.74.5-1.74 1.06-3.87 1.06-3.06 0-5.65-2.07-6.58-4.98L2.57 15.5C4.2 19.05 7.73 21.83 12 21.83Z"/>
+              </svg>
+              Continue with Google
+            </button>
+          </form>
+
+          <!-- SIGNUP FORM -->
+          <form class="auth-form" data-auth-form="signup" hidden>
+            <!-- STEP 1: Details -->
+            <div id="signupStep1">
+              <div class="form-field">
+                <span class="form-label">Full Name</span>
+                <div class="form-input-wrap">
+                  <span class="form-icon">✏️</span>
+                  <input id="signupName" type="text" placeholder="Your full name" autocomplete="name" />
+                </div>
+              </div>
+
+              <div class="form-field">
+                <span class="form-label">WhatsApp Number <span style="color:rgba(180,150,80,0.8);font-size:.63rem;font-weight:800;letter-spacing:.08em;">· OTP VERIFIED</span></span>
+                <div class="form-input-wrap">
+                  <span class="form-icon">📱</span>
+                  <span class="wa-prefix">+91</span>
+                  <input id="signupWhatsapp" type="tel" placeholder="9876543210" maxlength="10" autocomplete="tel" />
+                </div>
+              </div>
+
+              <div class="form-field">
+                <span class="form-label">Password</span>
+                <div class="form-input-wrap">
+                  <span class="form-icon">🔒</span>
+                  <input id="signupPassword" type="password" placeholder="Min 6 characters" autocomplete="new-password" />
+                  <button class="eye-btn" type="button" aria-label="Show password">◔</button>
+                </div>
+              </div>
+
+              <div class="signup-divider"></div>
+              <button class="submit-btn" type="button" id="sendOtpBtn">Send Verification OTP →</button>
+            </div>
+
+            <!-- STEP 2: OTP Verify -->
+            <div id="signupStep2" style="display:none;">
+              <div class="signup-step2-header">
+                <div class="signup-step2-icon">📱</div>
+                <div class="signup-step2-title">Verify your WhatsApp</div>
+                <div class="signup-step2-sub">6-digit OTP sent to <strong id="otpEmailDisplay"></strong></div>
+              </div>
+
+              <div class="signup-divider"></div>
+
+              <div class="form-field">
+                <span class="form-label">One-Time Password</span>
+                <div class="form-input-wrap">
+                  <span class="form-icon">🔑</span>
+                  <input id="signupOtp" type="text" placeholder="· · · · · ·" maxlength="6" inputmode="numeric" />
+                </div>
+              </div>
+
+              <button class="submit-btn" type="submit">Verify &amp; Create Account →</button>
+              <div class="otp-actions">
+                <button type="button" id="resendOtpBtn" class="otp-action-btn gold">Resend OTP</button>
+                <span class="otp-dot">●</span>
+                <button type="button" class="otp-action-btn muted" onclick="document.getElementById('signupStep1').style.display='';document.getElementById('signupStep2').style.display='none';">Change email</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="card-footer">
+            <span id="footerText">Don't have an account?</span>
+            <a href="#" id="signupCta"> Sign Up</a>
+          </div>
+          <a class="back-home-link" href="index.html">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+        GoogleAuthProvider, signInWithPopup, updateProfile,
+        doc, setDoc, getDoc, collection, query, where, getDocs, onSnapshot } from "./firebase.js";
+
+      function animateCount(el, target, suffix) {
+        let start = 0;
+        const step = Math.ceil(target / 40);
+        const timer = setInterval(() => {
+          start = Math.min(start + step, target);
+          el.textContent = start >= 1000 ? (start/1000).toFixed(1).replace('.0','') + 'k+' : start + suffix;
+          if (start >= target) clearInterval(timer);
+        }, 35);
+      }
+      let loginStats = { events: 0, bookings: 0, confirmed: 0 };
+      function renderLoginStats() {
+        const satisfaction = loginStats.bookings > 0
+          ? Math.round((loginStats.confirmed / loginStats.bookings) * 100)
+          : 98;
+        animateCount(document.getElementById('statEvents'), loginStats.events, '+');
+        animateCount(document.getElementById('statBookings'), loginStats.bookings, '+');
+        document.getElementById('statSat').textContent = satisfaction + '%';
+      }
+      function showLoginStatsError() {
+        document.getElementById('statEvents').textContent = '—';
+        document.getElementById('statBookings').textContent = '—';
+        document.getElementById('statSat').textContent = '—';
+      }
+      onSnapshot(query(collection(db, 'events'), where('status', '==', 'published')), snap => {
+        loginStats.events = snap.size || 0;
+        renderLoginStats();
+      }, showLoginStatsError);
+      onSnapshot(collection(db, 'bookings'), snap => {
+        loginStats.bookings = snap.size || 0;
+        loginStats.confirmed = snap.docs.filter(doc => doc.data().status === 'confirmed' || doc.data().status === 'paid').length;
+        renderLoginStats();
+      }, showLoginStatsError);
+
+      const authTabs = document.querySelectorAll("[data-auth-tab]");
+      const authForms = document.querySelectorAll("[data-auth-form]");
+      const authStatus = document.getElementById("authStatus");
+      const signupCta = document.getElementById("signupCta");
+      const footerText = document.getElementById("footerText");
+      const loginPhone = document.getElementById("loginPhone");
+      const loginPassword = document.getElementById("loginPassword");
+      const signupName = document.getElementById("signupName");
+      const signupPassword = document.getElementById("signupPassword");
+
+      document.querySelectorAll(".eye-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const input = btn.previousElementSibling;
+          input.type = input.type === "password" ? "text" : "password";
+          btn.textContent = input.type === "password" ? "◔" : "◉";
+        });
+      });
+
+      function setStatus(message, kind = "info") {
+        authStatus.textContent = message;
+        authStatus.dataset.kind = kind;
+      }
+
+      function toFirebaseEmail(input) {
+        return input.includes("@") ? input : `${input.toLowerCase()}@cityvibe.local`;
+      }
+
+      async function getRoleByUid(uid) {
+        try {
+          const snap = await getDoc(doc(db, "users", uid));
+          if (snap.exists()) return snap.data().role || "client";
+        } catch {}
+        return "client";
+      }
+
+      function redirect(role) {
+        // Check if coming from event-type-select with a specific dashboard
+        const params = new URLSearchParams(location.search);
+        const dash = params.get('dash') || sessionStorage.getItem('cw_lister_dash');
+        const listerRole = params.get('role') || sessionStorage.getItem('cw_lister_role');
+        try { sessionStorage.removeItem('cw_lister_cat'); sessionStorage.removeItem('cw_lister_dash'); sessionStorage.removeItem('cw_lister_role'); } catch(e) {}
+        if (role === 'admin') { window.location.href = 'admin-dashboard.html'; return; }
+        if (dash && listerRole !== 'customer') { window.location.href = dash; return; }
+        window.location.href = 'premium-client-dashboard.html';
+      }
+
+      function setMode(mode) {
+        authTabs.forEach(t => t.classList.toggle("active", t.dataset.authTab === mode));
+        authForms.forEach(f => { f.hidden = f.dataset.authForm !== mode; });
+        document.querySelector(".auth-shell").classList.toggle("signup-active", mode === "signup");
+        if (mode === "login") {
+          document.querySelector(".auth-card-head h2").innerHTML = "Welcome <span>back</span> 👋";
+          document.querySelector(".auth-card-head p").textContent = "Sign in to your CultureWave account";
+          footerText.textContent = "Don't have an account?";
+          signupCta.textContent = " Sign Up";
+        } else {
+          document.querySelector(".auth-card-head h2").innerHTML = "Create <span>account</span> ✨";
+          document.querySelector(".auth-card-head p").textContent = "Join CultureWave today";
+          footerText.textContent = "Already have an account?";
+          signupCta.textContent = " Login";
+        }
+        authStatus.textContent = "";
+        delete authStatus.dataset.kind;
+      }
+
+      authTabs.forEach(tab => tab.addEventListener("click", () => setMode(tab.dataset.authTab)));
+      signupCta.addEventListener("click", e => {
+        e.preventDefault();
+        const current = document.querySelector("[data-auth-tab].active")?.dataset.authTab;
+        setMode(current === "login" ? "signup" : "login");
+      });
+
+      document.querySelector("[data-auth-form='login']").addEventListener("submit", async e => {
+        e.preventDefault();
+        const email = toFirebaseEmail(loginPhone.value.trim());
+        const password = loginPassword.value;
+        if (!email || !password) { setStatus("Enter your username and password.", "warning"); return; }
+        setStatus("Signing in...", "info");
+        try {
+          const { user } = await signInWithEmailAndPassword(auth, email, password);
+          const role = await getRoleByUid(user.uid);
+          setStatus("Welcome back! Redirecting...", "success");
+          redirect(role);
+        } catch (err) {
+          const msg = ["auth/invalid-credential", "auth/wrong-password", "auth/user-not-found"].includes(err.code)
+            ? "Invalid username or password."
+            : err.message;
+          setStatus(msg, "warning");
+        }
+      });
+
+      document.getElementById('sendOtpBtn').addEventListener('click', async () => {
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail') ? document.getElementById('signupEmail').value.trim() : '';
+        const whatsapp = document.getElementById('signupWhatsapp').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        if (!name) { setStatus('Enter your full name.', 'warning'); return; }
+        if (!email || !email.includes('@')) { setStatus('Enter a valid email.', 'warning'); return; }
+        if (!whatsapp || whatsapp.length !== 10) { setStatus('Enter a valid 10-digit WhatsApp number.', 'warning'); return; }
+        if (!password || password.length < 6) { setStatus('Password must be at least 6 characters.', 'warning'); return; }
+        setStatus('Sending OTP to your WhatsApp…', 'info');
+        try {
+          const res = await fetch('/api/whatsapp/send-otp', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ phone: '+91'+whatsapp, name }) });
+          const data = await res.json();
+          if (!data.success) throw new Error(data.error || 'Failed to send OTP');
+          document.getElementById('signupStep1').style.display = 'none';
+          document.getElementById('signupStep2').style.display = '';
+          document.getElementById('otpEmailDisplay').textContent = '+91 ' + whatsapp;
+          setStatus('OTP sent to your WhatsApp!', 'success');
+        } catch(err) {
+          setStatus(err.message, 'warning');
+        }
+      });
+
+      document.getElementById('resendOtpBtn').addEventListener('click', async () => {
+        const whatsapp = document.getElementById('signupWhatsapp').value.trim();
+        const name = document.getElementById('signupName').value.trim();
+        if (!whatsapp) return;
+        setStatus('Resending OTP…', 'info');
+        const res = await fetch('/api/whatsapp/send-otp', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ phone: '+91'+whatsapp, name }) });
+        const data = await res.json();
+        setStatus(data.success ? 'OTP resent to your WhatsApp!' : 'Failed to resend.', data.success ? 'success' : 'warning');
+      });
+
+      document.querySelector("[data-auth-form='signup']").addEventListener("submit", async e => {
+        e.preventDefault();
+        const enteredOtp = document.getElementById('signupOtp').value.trim();
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail') ? document.getElementById('signupEmail').value.trim() : (document.getElementById('signupName').value.trim().toLowerCase().replace(/\s/g,'') + '@culturewave.user');
+        const whatsapp = document.getElementById('signupWhatsapp').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        if (!enteredOtp) { setStatus('Enter the OTP.', 'warning'); return; }
+        setStatus('Verifying OTP…', 'info');
+        try {
+          const otpSnap = await getDoc(doc(db, 'whatsappOtps', '+91' + whatsapp));
+          if (!otpSnap.exists()) { setStatus('OTP expired. Please resend.', 'warning'); return; }
+          const { otp, expiresAt } = otpSnap.data();
+          if (Date.now() > expiresAt) { setStatus('OTP expired. Please resend.', 'warning'); return; }
+          if (enteredOtp !== otp) { setStatus('Incorrect OTP. Try again.', 'warning'); return; }
+          setStatus('Creating account…', 'info');
+          const { user } = await createUserWithEmailAndPassword(auth, email, password);
+          await updateProfile(user, { displayName: name });
+          await setDoc(doc(db, 'users', user.uid), {
+            name, email,
+            whatsapp: '+91' + whatsapp,
+            role: 'client',
+            createdAt: Date.now()
+          });
+          setStatus('Account created! Redirecting…', 'success');
+          redirect('client');
+        } catch(err) {
+          const msg = err.code === 'auth/email-already-in-use' ? 'Account already exists. Try logging in.' : err.message;
+          setStatus(msg, 'warning');
+        }
+      });
+
+      document.getElementById("googleLoginBtn").addEventListener("click", async () => {
+        setStatus("Opening Google sign-in...", "info");
+        try {
+          const { user } = await signInWithPopup(auth, new GoogleAuthProvider());
+          const snap = await getDoc(doc(db, "users", user.uid));
+          if (!snap.exists()) {
+            await user.delete();
+            setStatus("No account found. Please sign up with email first.", "warning");
+            return;
+          }
+          const role = await getRoleByUid(user.uid);
+          setStatus("Signed in! Redirecting...", "success");
+          redirect(role);
+        } catch (err) {
+          if (err.code !== "auth/popup-closed-by-user") setStatus(err.message, "warning");
+          else setStatus("", "info");
+        }
+      });
+
+      setMode("login");
+      // auto-open signup tab if coming from event-type-select
+      if(new URLSearchParams(location.search).get('tab')==='signup') setMode('signup');
+    </script>
+  </body>
+</html>
