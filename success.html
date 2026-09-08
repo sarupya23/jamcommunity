@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CultureWave | Booking Confirmed</title>
+  <title>JamCommunity.Vij | Booking Confirmed</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -270,8 +270,8 @@
   <header class="topbar">
     <div class="nav-wrap">
       <div class="brand-block">
-        <div class="logo">CultureWave</div>
-        <div class="brand-sub">by OGSHOOTS LUXE</div>
+        <div class="logo">JamCommunity.Vij</div>
+        <div class="brand-sub"></div>
       </div>
       <nav class="topnav">
         <a href="index.html">Home</a>
@@ -345,7 +345,7 @@
             </div>
             <div class="sc-detail">
               <span class="sc-detail-label">Issued by</span>
-              <span class="sc-detail-value" id="dIssuedBy">CultureWave</span>
+              <span class="sc-detail-value" id="dIssuedBy">JamCommunity.Vij</span>
             </div>
           </div>
 
@@ -381,7 +381,7 @@
   <div class="footer-glow-top"></div>
   <div class="footer-wrap">
     <div class="footer-branding">
-      <div class="footer-brand">CultureWave</div>
+      <div class="footer-brand">JamCommunity.Vij</div>
       <p>Premium events, workshops &amp; restaurant bookings — all in one seamless flow.</p>
       <div class="footer-socials">
         <a class="footer-social-button" href="https://www.instagram.com/weareogshooters?igsi=OGJtc25nNW1jMnFi&amp;utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram">
@@ -436,9 +436,9 @@
   </div>
   <div class="footer-divider"></div>
   <div class="footer-bottom">
-    <span>© 2025 OG SHOOTS. All rights reserved. Made with <span class="footer-heart">♥</span> in India.</span>
+    <span>© 2025 . All rights reserved. Made with <span class="footer-heart">♥</span> in India.</span>
     <span class="footer-credit">Developed by <strong>Srisanth Boddu</strong></span>
-    <span class="footer-owned">Owned by OGSHOOTS LUXE</span>
+    <span class="footer-owned">Owned </span>
   </div>
 </footer>
 
@@ -594,7 +594,7 @@
       }
 
       // QR code — encode booking verification data
-      const qrData = JSON.stringify({ id: bookingId, event: eventName, amount, date: dateStr, issuer: "CultureWave", type: bkType });
+      const qrData = JSON.stringify({ id: bookingId, event: eventName, amount, date: dateStr, issuer: "JamCommunity.Vij", type: bkType });
       try {
         QRCode.toCanvas(document.getElementById("qrCanvas"), qrData, {
           width: 120, margin: 1,
@@ -652,7 +652,7 @@
           logging: false
         });
         const link = document.createElement("a");
-        link.download = `CultureWave-Ticket-${shortId}.png`;
+        link.download = `JamCommunity.Vij-Ticket-${shortId}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
       } catch(e) {
@@ -664,11 +664,11 @@
 
     /* ── SHARE ── */
     document.getElementById("btnShare")?.addEventListener("click", async () => {
-      const shareText = `I just booked "${eventName}" on CultureWave! Booking ID: ${shortId}`;
+      const shareText = `I just booked "${eventName}" on JamCommunity.Vij! Booking ID: ${shortId}`;
       const shareUrl  = window.location.href;
       const btn = document.getElementById("btnShare");
       if (navigator.share) {
-        try { await navigator.share({ title: "CultureWave Booking Confirmed", text: shareText, url: shareUrl }); } catch(e) { /* dismissed */ }
+        try { await navigator.share({ title: "JamCommunity.Vij Booking Confirmed", text: shareText, url: shareUrl }); } catch(e) { /* dismissed */ }
         return;
       }
       // clipboard fallback — works on HTTPS; on file:// use textarea trick

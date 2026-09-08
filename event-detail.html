@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>CultureWave | Event</title>
+  <title>JamCommunity.Vij | Event</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800;900&display=swap" rel="stylesheet"/>
@@ -207,8 +207,8 @@
 <header class="topbar">
   <div class="nav-wrap">
     <div class="brand-block">
-      <div class="logo">CultureWave</div>
-      <div class="brand-sub">by OGSHOOTS LUXE</div>
+      <div class="logo">JamCommunity.Vij</div>
+      <div class="brand-sub"></div>
     </div>
     <nav class="topnav">
       <a href="events.html">Events</a>
@@ -512,7 +512,7 @@ function openShare(){
 function closeShare(){ document.getElementById('shareModal').classList.remove('open'); }
 function copyLink(){ navigator.clipboard.writeText(getShareUrl()).then(()=>showToast('Link copied!')); closeShare(); }
 function shareWA(){ window.open(`https://wa.me/?text=${encodeURIComponent('Check out this event: '+getShareUrl())}`, '_blank'); }
-function shareTwitter(){ window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent('Check out this event on CultureWave!')}&url=${encodeURIComponent(getShareUrl())}`, '_blank'); }
+function shareTwitter(){ window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent('Check out this event on JamCommunity.Vij!')}&url=${encodeURIComponent(getShareUrl())}`, '_blank'); }
 function shareEmail(){ window.open(`mailto:?subject=${encodeURIComponent(evData.name||'Event')}&body=${encodeURIComponent('Check out this event: '+getShareUrl())}`, '_blank'); }
 
 function goToProfile(){
@@ -571,7 +571,7 @@ function register(){
 async function renderEvent(data){
   evData = data;
   ownerUid = data.ownerId;
-  document.title = `${data.name||'Event'} | CultureWave`;
+  document.title = `${data.name||'Event'} | JamCommunity.Vij`;
 
   // hero banner — use poster (cardImgUrl) not cover
   const hero = document.getElementById('heroBanner');

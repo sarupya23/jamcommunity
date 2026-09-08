@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>CultureWave | Organiser Profile</title>
+  <title>JamCommunity.Vij | Organiser Profile</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800;900&display=swap" rel="stylesheet"/>
@@ -106,8 +106,8 @@
 <header class="topbar">
   <div class="nav-wrap">
     <div class="brand-block">
-      <div class="logo">CultureWave</div>
-      <div class="brand-sub">by OGSHOOTS LUXE</div>
+      <div class="logo">JamCommunity.Vij</div>
+      <div class="brand-sub"></div>
     </div>
     <nav class="topnav">
       <a href="events.html">Events</a>
@@ -350,7 +350,7 @@ function renderProfile(data){
   document.getElementById('profileHandle').textContent = '@'+(data.handle||data.uid?.slice(0,8)||'organiser');
   document.getElementById('profileBio').textContent = data.bio||'';
   document.getElementById('statFollowers').textContent = (data.followers||0).toLocaleString('en-IN');
-  document.title = `${data.name||'Organiser'} | CultureWave`;
+  document.title = `${data.name||'Organiser'} | JamCommunity.Vij`;
 
   if(data.verified) document.getElementById('verifiedBadge').style.display='';
   if(data.plan==='premium'||data.plan==='growth') document.getElementById('premiumBadge').style.display='';

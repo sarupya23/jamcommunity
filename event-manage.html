@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Manage Event | CultureWave</title>
+<title>Manage Event | JamCommunity.Vij</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -964,7 +964,7 @@ function renderEventMeta(){
   document.getElementById('topbarTitle').textContent=name;
   document.getElementById('topbarSub').textContent=d.city||(d.startDate?fmtDate(d.startDate):'No date set');
   document.getElementById('anEventName').textContent=name;
-  document.title='Manage: '+name+' | CultureWave';
+  document.title='Manage: '+name+' | JamCommunity.Vij';
   const st=normStatus(d.status);
   const stEl=document.getElementById('sbEventStatus');
   stEl.textContent=st==='published'?'Live':st==='archived'?'Archived':'Draft';
@@ -1173,7 +1173,7 @@ window.downloadInvoice=function(){
   .row:last-child{border-bottom:0;} .row.total{font-weight:800;font-size:15px;background:#f0f4ff;border-radius:0 0 8px 8px;}
   .box{background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;overflow:hidden;}
   .footer{text-align:center;font-size:12px;color:#868e96;margin-top:32px;}</style></head><body>
-  <div class="head"><h1>CultureWave Invoice</h1><p>Booking Confirmation &amp; Receipt</p></div>
+  <div class="head"><h1>JamCommunity.Vij Invoice</h1><p>Booking Confirmation &amp; Receipt</p></div>
   <div class="section"><h3>Customer</h3><div class="box">
     <div class="row"><span>Name</span><span>${name}</span></div>
     <div class="row"><span>Email</span><span>${email}</span></div>
@@ -1192,7 +1192,7 @@ window.downloadInvoice=function(){
     <div class="row"><span>Platform Fee</span><span>Rs.0</span></div>
     <div class="row total"><span>Total Paid</span><span>${money(amount)}</span></div>
   </div></div>
-  <div class="footer">Thank you for booking with CultureWave &mdash; by OGSHOOTS LUXE</div>
+  <div class="footer">Thank you for booking with JamCommunity.Vij &mdash; </div>
   </body></html>`;
   const w=window.open('','_blank');
   w.document.write(html);
